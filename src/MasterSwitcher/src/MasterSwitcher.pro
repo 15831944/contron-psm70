@@ -58,7 +58,14 @@ config_ini.target = ini
 
 DEPLOYMENTFOLDERS += ping_bat ping_sh ip_bat ip_sh onmaster_bat onmaster_sh config_ini
 
-export(OUT_PWD = $$OUT_DIR)
+ip_add_bat.source = scripts/ip_add.bat
+ip_add_bat.target = scripts
+ip_del_bat.source = scripts/ip_del.bat
+ip_del_bat.target = scripts
+ip_search_bat.source = scripts/ip_search.bat
+ip_search_bat.target = scripts
+
+DEPLOYMENTFOLDERS += ip_add_bat ip_del_bat ip_search_bat
 
 include(deployment.pri)
 qtcAddDeployment()

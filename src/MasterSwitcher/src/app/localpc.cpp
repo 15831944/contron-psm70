@@ -100,10 +100,12 @@ void LocalPC::makeMaster()
 {    
     enter();
 
-    APP_LOG("[LOCAL]check ip(%s) exists\n", mFloatIP);
-    printf("[LOCAL]check ip(%s) exists\n", mFloatIP);
+    APP_LOG("[LOCAL]try make MASTER\n");
+    printf("[LOCAL]try make MASTER\n");
     if(floatIPOnline())
     {
+        APP_LOG("[LOCAL]ip(%s) online\n", mFloatIP);
+        printf("[LOCAL]ip(%s) online\n", mFloatIP);
         return;
     }
 
@@ -117,7 +119,8 @@ void LocalPC::makeMaster()
     APP_LOG("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
     printf("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
     Ipconfig ipconfig;
-    if(ipconfig.addIP(mEthernet, mFloatIP, mFloatNetmask, mFloatGateway))
+    ipconfig.addIP(mEthernet, mFloatIP, mFloatNetmask, mFloatGateway);
+    if(floatIPOnline())
     {
         APP_LOG("[LOCAL]add ip ok\n");
         printf("[LOCAL]add ip ok\n");
