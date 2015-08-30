@@ -72,6 +72,7 @@ android-no-sdk {
         !isEqual(source,$$target) {
             !isEmpty(copyCommand):copyCommand += &&
             isEqual(QMAKE_DIR_SEP, \\) {
+                target =$$replace(target, $$last(sourcePathSegments), )
                 copyCommand += $(COPY_DIR) \"$$source\" \"$$target\"
             } else {
                 source = $$replace(source, \\\\, /)
