@@ -60,6 +60,7 @@ config_t *loadConfig()
         }
 
         get_config_string( result, LocalEthernet );
+        get_config_string( result, LocalGateway );
         get_config_string( result, FloatIP );
         get_config_string( result, FloatGateway );
         get_config_string( result, FloatNetmask );

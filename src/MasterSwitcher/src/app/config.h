@@ -12,6 +12,7 @@ typedef struct _config
     int HeartbeatPort;
     int ReconnectInterval;
     char LocalEthernet[NAME_LEN];
+    char LocalGateway[IP_LEN];
 } config_t;
 
 config_t *loadConfig();

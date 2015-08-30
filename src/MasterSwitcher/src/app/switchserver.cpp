@@ -41,8 +41,12 @@ void SwitchServer::gatewayStateChanged()
 
 void SwitchServer::canBeMaster()
 {
-    APP_LOG("[SERVER]remote is slave \n");
-    mLocal->makeMaster();
+    mGateway->checkOnline();
+    if(GATEWAY_ONLINE==mGateway->getState())
+    {
+        APP_LOG("[SERVER]remote is slave \n");
+        mLocal->makeMaster();
+    }
 }
 
 void SwitchServer::switchMaster()
