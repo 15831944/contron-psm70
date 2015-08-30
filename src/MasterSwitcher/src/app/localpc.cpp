@@ -195,21 +195,17 @@ void LocalPC::addNewClient(void *tcp)
 
 void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {    
+    enter();
+
     printf("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
-    bool found = false;
     if(hb!=NULL)
     {
         delete hb;
 
-        found = true;
-    }
-    if(found)
-    {
         char *p = NULL;
         int size = 0;
-        HeartbeatProtocol protocol;
         bool isSlave = (getState()==LOCAL_SLAVE);
         double timePoint = getSetupTime();
         Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
@@ -222,7 +218,9 @@ void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
                 delete p;
             }
         }
+
     }
+    leave();
 }
 
 void LocalPC::tcpClientConnected(void *tcp)
