@@ -7,7 +7,7 @@
 Gateway::Gateway()
     :BaseObject(), IOnlineChecker()
 {
-    mState = GATEWAY_OFFLINE;
+    mState = GATEWAY_ONLINE;
     mGatewayIP = "10.7.5.254";
 
     mOnlineChecker = new OnlineChecker();
