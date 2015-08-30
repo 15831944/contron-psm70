@@ -1,0 +1,11 @@
+ipch
+*.sdf
+*.user
+debug
+release
+Win32
+.svn
+.user
+.suo
+Makefile
+GeneratedFiles
