@@ -47,6 +47,9 @@ typedef SOCKET SOCKET_HANDLE;
 #ifndef TCP_KEEPCNT
 #define TCP_KEEPCNT 6
 #endif
+#ifndef socklen_t
+#define socklen_t int
+#endif
 #else
 typedef int SOCKET_HANDLE;
 #include <netinet/tcp.h>

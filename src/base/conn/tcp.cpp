@@ -6,11 +6,18 @@ CRITICAL_SECTION tcp_critical;
 void tcp_init()
 {
     MUTEX_INIT(&tcp_critical);
+#if WIN32
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
 }
 
 
 void tcp_free()
 {
+#if WIN32
+    WSACleanup();
+#endif
     MUTEX_FREE(&tcp_critical);
 }
 
@@ -106,12 +113,9 @@ void tcp_connect_client(SOCKET_HANDLE &fd, char *hostname, int port)
     struct sockaddr_in addr;
 
 #if WIN32
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (NULL == (host = gethostbyname(hostname)))
     {
         fd = INVALID_SOCKET;
-        WSACleanup();
         return;
     }
 #else
@@ -180,12 +184,9 @@ void tcp_connect_server(SOCKET_HANDLE &fd, char *hostname, int port)
     struct sockaddr_in local;
 
 #if WIN32
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (NULL == (host = gethostbyname(hostname)))
     {
         fd = INVALID_SOCKET;
-        WSACleanup();
         return;
     }
 #else
