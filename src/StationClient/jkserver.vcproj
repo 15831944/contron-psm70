@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<VisualStudioProject ProjectType="Visual C++" Version="9.00" Name="" ProjectGUID="{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}" RootNamespace="jkserver" Keyword="Qt4VSv1.0" TargetFrameworkVersion="0">
+	<Platforms>
+		<Platform Name="Win32"/>
+	</Platforms>
+	<ToolFiles/>
+	<Configurations>
+		<Configuration Name="Release|Win32" OutputDirectory="release\" IntermediateDirectory="$(Platform)\$(ConfigurationName)\" ConfigurationType="1" CharacterSet="0" WholeProgramOptimization="">
+			<Tool Name="VCPreBuildEventTool" Description="" CommandLine=""/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool" PreprocessorDefinitions="" MkTypLibCompatible="" TargetEnvironment="" GenerateStublessProxies="" TypeLibraryName="" HeaderFileName="" DLLDataFileName="" InterfaceIdentifierFileName="" ProxyFileName=""/>
+			<Tool Name="VCCLCompilerTool" Optimization="2" EnableIntrinsicFunctions="" AdditionalIncludeDirectories='".";".";"..\..\src";"..\common";"..\..\src";"..\common\sys";"..\common";"..\common\conn";"..\common";"..\common\utils";"..\common";"protocol";".";"app";".";"..\psmlib";"..\..\src";"..\psmlib\WLLibs";"..\psmlib\CommLibs";"..\psmlib\psmdll";"..\psmlib\CommLibs\inc";"..\psmlib\CommLibs\inc\record";"..\psmlib\CommLibs\inc\P7Protocol";"..\psmlib\CommLibs\TicketClientInterface";"..\psmlib\CommLibs\BigDataClientInterface";"..\psmlib\CommLibs\RTDBClientInterface";"..\psmlib\CommLibs\WFServiceClientInterface";"..\psmlib\CommLibs\TicketRelateInterface";"..\psmlib\CommLibs\RTDBYKClientInterface";"..\StationLibrary";"Y:\qt\qt5\5.4\msvc2012_opengl\mkspecs\win32-msvc2012";' PreprocessorDefinitions="_CONSOLE;UNICODE;WIN32;HAS_PSM;NDEBUG;" MinimalRebuild="" ExceptionHandling="Sync" BasicRuntimeChecks="" RuntimeLibrary="2" EnableFunctionLevelLinking="" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="" PrecompiledHeaderThrough="" PrecompiledHeaderFile="" WarningLevel="3" Detect64BitPortabilityProblems="false" DebugInformationFormat="0" CompileAs="" DisableSpecificWarnings=""/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_CONSOLE;UNICODE;WIN32;HAS_PSM;" Culture="" AdditionalIncludeDirectories=""/>
+			<Tool Name="VCPreLinkEventTool" CommandLine=""/>
+			<Tool Name="VCLinkerTool" AdditionalDependencies="Ws2_32.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBClientDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientDll.lib RTDBYKDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLLEx.lib D:\tmp\psm_groundserver\src\StationLibrary\lib\StationLibrary.lib " OutputFile="$(OutDir)\jkserver.exe" LinkIncremental="1" AdditionalLibraryDirectories="$(QTDIR)\lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface;D:\tmp\psm_groundserver\src\StationLibrary\lib;" IgnoreAllDefaultLibraries="" IgnoreDefaultLibraryNames="" GenerateDebugInformation="false" SubSystem="1" ImportLibrary="" OptimizeReferences="" EnableCOMDATFolding="" TargetMachine=""/>
+			<Tool Name="VCLibrarianTool"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+		<Configuration Name="Debug|Win32" OutputDirectory="debug\" IntermediateDirectory="$(Platform)\$(ConfigurationName)\" ConfigurationType="1" CharacterSet="0" WholeProgramOptimization="">
+			<Tool Name="VCPreBuildEventTool" Description="" CommandLine=""/>
+			<Tool Name="VCCustomBuildTool"/>
+			<Tool Name="VCXMLDataGeneratorTool"/>
+			<Tool Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool Name="VCMIDLTool" PreprocessorDefinitions="" MkTypLibCompatible="" TargetEnvironment="" GenerateStublessProxies="" TypeLibraryName="" HeaderFileName="" DLLDataFileName="" InterfaceIdentifierFileName="" ProxyFileName=""/>
+			<Tool Name="VCCLCompilerTool" Optimization="0" EnableIntrinsicFunctions="" AdditionalIncludeDirectories='".";".";"..\..\src";"..\common";"..\..\src";"..\common\sys";"..\common";"..\common\conn";"..\common";"..\common\utils";"..\common";"protocol";".";"app";".";"..\psmlib";"..\..\src";"..\psmlib\WLLibs";"..\psmlib\CommLibs";"..\psmlib\psmdll";"..\psmlib\CommLibs\inc";"..\psmlib\CommLibs\inc\record";"..\psmlib\CommLibs\inc\P7Protocol";"..\psmlib\CommLibs\TicketClientInterface";"..\psmlib\CommLibs\BigDataClientInterface";"..\psmlib\CommLibs\RTDBClientInterface";"..\psmlib\CommLibs\WFServiceClientInterface";"..\psmlib\CommLibs\TicketRelateInterface";"..\psmlib\CommLibs\RTDBYKClientInterface";"..\StationLibrary";"Y:\qt\qt5\5.4\msvc2012_opengl\mkspecs\win32-msvc2012";' PreprocessorDefinitions="_CONSOLE;UNICODE;WIN32;HAS_PSM;" MinimalRebuild="" ExceptionHandling="Sync" BasicRuntimeChecks="" RuntimeLibrary="3" EnableFunctionLevelLinking="" TreatWChar_tAsBuiltInType="true" UsePrecompiledHeader="" PrecompiledHeaderThrough="" PrecompiledHeaderFile="" WarningLevel="3" Detect64BitPortabilityProblems="false" DebugInformationFormat="3" CompileAs="" DisableSpecificWarnings=""/>
+			<Tool Name="VCManagedResourceCompilerTool"/>
+			<Tool Name="VCResourceCompilerTool" PreprocessorDefinitions="_CONSOLE;UNICODE;WIN32;HAS_PSM;_DEBUG;" Culture="" AdditionalIncludeDirectories=""/>
+			<Tool Name="VCPreLinkEventTool" CommandLine=""/>
+			<Tool Name="VCLinkerTool" AdditionalDependencies="Ws2_32.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBClientDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientDll.lib RTDBYKDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLL.lib D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLLEx.lib D:\tmp\psm_groundserver\src\StationLibrary\lib\StationLibrary.lib " OutputFile="$(OutDir)\jkserver.exe" LinkIncremental="" AdditionalLibraryDirectories="$(QTDIR)\lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface;D:\tmp\psm_groundserver\src\StationLibrary\lib;" IgnoreAllDefaultLibraries="" IgnoreDefaultLibraryNames="" GenerateDebugInformation="true" SubSystem="1" ImportLibrary="" OptimizeReferences="" EnableCOMDATFolding="" TargetMachine=""/>
+			<Tool Name="VCLibrarianTool"/>
+			<Tool Name="VCALinkTool"/>
+			<Tool Name="VCManifestTool"/>
+			<Tool Name="VCXDCMakeTool"/>
+			<Tool Name="VCBscMakeTool"/>
+			<Tool Name="VCFxCopTool"/>
+			<Tool Name="VCAppVerifierTool"/>
+			<Tool Name="VCPostBuildEventTool"/>
+		</Configuration>
+	</Configurations>
+	<References/>
+	<Files>
+		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;inc;xsd" UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\ChartTicketServDataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record\DSRecord.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\ExtraDef.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\ExtraDef.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7DataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol\P7ProtocolInsType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBBusinessInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBBusinessInterfaceDatatype.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface\RTDBYKDLLDataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface\RTDBYKDLLInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLLInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateExDataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateExInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLLDataType.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLLInterface.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\app\app.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\app\app_intf.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\app\config.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_cmd_buffer.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_core.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_crc.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_def.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_function.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_intf.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker_common.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker_protocol.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\common\sys\platform.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_def.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_device.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_file.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_intf.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_sys.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\station_client.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\station_def.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationClient\station_server.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationLibrary\stationlibrary.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\StationLibrary\stationlibrary_global.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\common\conn\tcp.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\common\utils\util_buffer.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\common\utils\util_log.h"/>
+			<File RelativePath="D:\tmp\psm_groundserver\src\common\utils\utils.h"/>
+		</Filter>
+		<Filter Name="Source Files" Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx" UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File RelativePath="..\psmlib\CommLibs\inc\record\DSRecord.cpp"/>
+			<File RelativePath="app\app.cpp"/>
+			<File RelativePath="app\app_intf.cpp"/>
+			<File RelativePath="app\config.cpp"/>
+			<File RelativePath="protocol\jk_cmd_buffer.cpp"/>
+			<File RelativePath="protocol\jk_core.cpp"/>
+			<File RelativePath="protocol\jk_crc.cpp"/>
+			<File RelativePath="protocol\jk_function.cpp"/>
+			<File RelativePath="protocol\jk_intf.cpp"/>
+			<File RelativePath="protocol\jk_worker.cpp"/>
+			<File RelativePath="protocol\jk_worker_common.cpp"/>
+			<File RelativePath="protocol\jk_worker_protocol.cpp"/>
+			<File RelativePath="main.cpp"/>
+			<File RelativePath="..\psmlib\psmdll\psm_device.cpp"/>
+			<File RelativePath="..\psmlib\psmdll\psm_file.cpp"/>
+			<File RelativePath="..\psmlib\psmdll\psm_intf.cpp"/>
+			<File RelativePath="..\psmlib\psmdll\psm_sys.cpp"/>
+			<File RelativePath="station_client.cpp"/>
+			<File RelativePath="station_server.cpp"/>
+			<File RelativePath="..\common\conn\tcp.cpp"/>
+			<File RelativePath="..\common\utils\util_buffer.cpp"/>
+			<File RelativePath="..\common\utils\util_log.cpp"/>
+			<File RelativePath="..\common\utils\utils.cpp"/>
+		</Filter>
+	</Files>
+	<Globals/>
+</VisualStudioProject>
+

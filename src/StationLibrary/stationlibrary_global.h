@@ -1,0 +1,10 @@
+#ifndef STATIONLIBRARY_GLOBAL_H
+#define STATIONLIBRARY_GLOBAL_H
+
+#if defined(STATIONLIBRARY_LIBRARY)
+#  define STATIONLIBRARYSHARED_EXPORT __declspec(dllexport)
+#else
+#  define STATIONLIBRARYSHARED_EXPORT __declspec(dllimport)
+#endif
+
+#endif // STATIONLIBRARY_GLOBAL_H

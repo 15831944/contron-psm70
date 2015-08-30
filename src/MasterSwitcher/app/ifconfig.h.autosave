@@ -1,0 +1,12 @@
+#ifndef IFCONFIG_H
+#define IFCONFIG_H
+
+
+class Ifconfig
+{
+public:
+    Ifconfig();
+    ~Ifconfig();
+};
+
+#endif // IFCONFIG_H

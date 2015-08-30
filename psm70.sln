@@ -1,0 +1,52 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jkserver", "src\StationClient\jkserver.vcxproj", "{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AD02E590-92CA-328B-9478-3607D093F64A} = {AD02E590-92CA-328B-9478-3607D093F64A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StationLibrary", "src\StationLibrary\StationLibrary.vcxproj", "{AD02E590-92CA-328B-9478-3607D093F64A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StationClientDemo", "src\StationClientDemo\StationClientDemo.vcxproj", "{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AD02E590-92CA-328B-9478-3607D093F64A} = {AD02E590-92CA-328B-9478-3607D093F64A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcptest", "tests\tcptest\tcptest.vcxproj", "{64D67ECB-D144-34D5-8BC0-01371FDF75C4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "threadtest", "tests\threadtest\threadtest.vcxproj", "{DF770AE2-444E-3D32-AD5C-D546B94BA97F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Debug|Win32.Build.0 = Debug|Win32
+		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Release|Win32.ActiveCfg = Release|Win32
+		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Release|Win32.Build.0 = Release|Win32
+		{AD02E590-92CA-328B-9478-3607D093F64A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AD02E590-92CA-328B-9478-3607D093F64A}.Debug|Win32.Build.0 = Debug|Win32
+		{AD02E590-92CA-328B-9478-3607D093F64A}.Release|Win32.ActiveCfg = Release|Win32
+		{AD02E590-92CA-328B-9478-3607D093F64A}.Release|Win32.Build.0 = Release|Win32
+		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Debug|Win32.Build.0 = Debug|Win32
+		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Release|Win32.ActiveCfg = Release|Win32
+		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Release|Win32.Build.0 = Release|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Debug|Win32.Build.0 = Debug|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Release|Win32.ActiveCfg = Release|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Release|Win32.Build.0 = Release|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Debug|Win32.Build.0 = Debug|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Release|Win32.ActiveCfg = Release|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		Qt5Version = msvc2012_opengl
+	EndGlobalSection
+EndGlobal

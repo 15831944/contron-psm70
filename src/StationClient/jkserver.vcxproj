@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}</ProjectGuid>
+    <RootNamespace>jkserver</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <PlatformToolSet>v110</PlatformToolSet>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>jkserver</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <PlatformToolSet>v110</PlatformToolSet>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>jkserver</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">jkserver</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">jkserver</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>".";".";"..\..\src";"..\common";"..\..\src";"..\common\sys";"..\common";"..\common\conn";"..\common";"..\common\utils";"..\common";"protocol";".";"app";".";"..\psmlib";"..\..\src";"..\psmlib\WLLibs";"..\psmlib\CommLibs";"..\psmlib\psmdll";"..\psmlib\CommLibs\inc";"..\psmlib\CommLibs\inc\record";"..\psmlib\CommLibs\inc\P7Protocol";"..\psmlib\CommLibs\TicketClientInterface";"..\psmlib\CommLibs\BigDataClientInterface";"..\psmlib\CommLibs\RTDBClientInterface";"..\psmlib\CommLibs\WFServiceClientInterface";"..\psmlib\CommLibs\TicketRelateInterface";"..\psmlib\CommLibs\RTDBYKClientInterface";"..\StationLibrary";"Y:\qt\qt5\5.4\msvc2012_opengl\mkspecs\win32-msvc2012";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;HAS_PSM;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>Ws2_32.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBClientDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientDll.lib;RTDBYKDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLLEx.lib;D:\tmp\psm_groundserver\src\StationLibrary\lib\StationLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface;D:\tmp\psm_groundserver\src\StationLibrary\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <OutputFile>$(OutDir)\jkserver.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;HAS_PSM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>".";".";"..\..\src";"..\common";"..\..\src";"..\common\sys";"..\common";"..\common\conn";"..\common";"..\common\utils";"..\common";"protocol";".";"app";".";"..\psmlib";"..\..\src";"..\psmlib\WLLibs";"..\psmlib\CommLibs";"..\psmlib\psmdll";"..\psmlib\CommLibs\inc";"..\psmlib\CommLibs\inc\record";"..\psmlib\CommLibs\inc\P7Protocol";"..\psmlib\CommLibs\TicketClientInterface";"..\psmlib\CommLibs\BigDataClientInterface";"..\psmlib\CommLibs\RTDBClientInterface";"..\psmlib\CommLibs\WFServiceClientInterface";"..\psmlib\CommLibs\TicketRelateInterface";"..\psmlib\CommLibs\RTDBYKClientInterface";"..\StationLibrary";"Y:\qt\qt5\5.4\msvc2012_opengl\mkspecs\win32-msvc2012";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;HAS_PSM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>Ws2_32.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBClientDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientDll.lib;RTDBYKDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLL.lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDLLEx.lib;D:\tmp\psm_groundserver\src\StationLibrary\lib\StationLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record;D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface;D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface;D:\tmp\psm_groundserver\src\StationLibrary\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <OutputFile>$(OutDir)\jkserver.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Console</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;HAS_PSM;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\psmlib\CommLibs\inc\record\DSRecord.cpp" />
+    <ClCompile Include="app\app.cpp" />
+    <ClCompile Include="app\app_intf.cpp" />
+    <ClCompile Include="app\config.cpp" />
+    <ClCompile Include="protocol\jk_cmd_buffer.cpp" />
+    <ClCompile Include="protocol\jk_core.cpp" />
+    <ClCompile Include="protocol\jk_crc.cpp" />
+    <ClCompile Include="protocol\jk_function.cpp" />
+    <ClCompile Include="protocol\jk_intf.cpp" />
+    <ClCompile Include="protocol\jk_worker.cpp" />
+    <ClCompile Include="protocol\jk_worker_common.cpp" />
+    <ClCompile Include="protocol\jk_worker_protocol.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\psmlib\psmdll\psm_device.cpp" />
+    <ClCompile Include="..\psmlib\psmdll\psm_file.cpp" />
+    <ClCompile Include="..\psmlib\psmdll\psm_intf.cpp" />
+    <ClCompile Include="..\psmlib\psmdll\psm_sys.cpp" />
+    <ClCompile Include="station_client.cpp" />
+    <ClCompile Include="station_server.cpp" />
+    <ClCompile Include="..\common\conn\tcp.cpp" />
+    <ClCompile Include="..\common\utils\util_buffer.cpp" />
+    <ClCompile Include="..\common\utils\util_log.cpp" />
+    <ClCompile Include="..\common\utils\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\BigDataClientInterface\BigDataTransClientInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\ChartTicketServDataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\record\DSRecord.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\ExtraDef.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\ExtraDef.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7DataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\inc\P7Protocol\P7ProtocolInsType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBBusinessInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBClientInterface\RTDBBusinessInterfaceDatatype.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface\RTDBYKDLLDataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\RTDBYKClientInterface\RTDBYKDLLInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketClientInterface\TicketDLLInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateDataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateExDataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateExInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\TicketRelateInterface\TicketRelateInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLLDataType.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\CommLibs\WFServiceClientInterface\WFClientDLLInterface.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\app\app.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\app\app_intf.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\app\config.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_cmd_buffer.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_core.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_crc.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_def.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_function.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_intf.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker_common.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\protocol\jk_worker_protocol.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\common\sys\platform.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_def.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_device.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_file.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_intf.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\psmlib\psmdll\psm_sys.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\station_client.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\station_def.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationClient\station_server.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationLibrary\stationlibrary.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\StationLibrary\stationlibrary_global.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\common\conn\tcp.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\common\utils\util_buffer.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\common\utils\util_log.h" />
+    <ClInclude Include="D:\tmp\psm_groundserver\src\common\utils\utils.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Qt5Version_x0020_Win32="msvc2012_opengl" UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

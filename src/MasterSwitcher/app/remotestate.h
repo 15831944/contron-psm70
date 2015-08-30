@@ -1,0 +1,11 @@
+#ifndef REMOTESTATE_H
+#define REMOTESTATE_H
+
+
+enum RemoteState {
+    REMOTE_UNCONNECT,
+    REMOTE_CONNECTED,
+    REMOTE_WORK
+};
+
+#endif // REMOTESTATE_H

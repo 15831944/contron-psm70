@@ -1,0 +1,26 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tcptest", "D:/tmp/psm_groundserver/tests/tcptest\tcptest.vcxproj", "{64D67ECB-D144-34D5-8BC0-01371FDF75C4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "threadtest", "D:/tmp/psm_groundserver/tests/threadtest\threadtest.vcxproj", "{DF770AE2-444E-3D32-AD5C-D546B94BA97F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Debug|Win32.Build.0 = Debug|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Release|Win32.ActiveCfg = Release|Win32
+		{64D67ECB-D144-34D5-8BC0-01371FDF75C4}.Release|Win32.Build.0 = Release|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Debug|Win32.Build.0 = Debug|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Release|Win32.ActiveCfg = Release|Win32
+		{DF770AE2-444E-3D32-AD5C-D546B94BA97F}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
