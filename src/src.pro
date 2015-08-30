@@ -13,5 +13,5 @@ SUBDIRS += \
 #StationClientDemo.depends = StationLibrary
 #StationClient.depends = StationLibrary
 
-#MasterSwitcher.file = MasterSwitcher/src/MasterSwitcher.pro
+MasterSwitcher.file = MasterSwitcher/src/MasterSwitcher.pro
 
