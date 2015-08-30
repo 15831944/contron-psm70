@@ -2,6 +2,7 @@
 
 #include "log.h"
 #include "config.h"
+#include "tcp.h"
 
 
 MasterSwitcherApp::MasterSwitcherApp()
@@ -9,12 +10,8 @@ MasterSwitcherApp::MasterSwitcherApp()
     mLocal = new LocalPC();
 
     mRemote = new RemotePC();
-    mRemote->setIp(config_instance()->RemoteIP);
-    mRemote->setPort(config_instance()->HeartbeatPort);
-    mRemote->setReconnectInterval(config_instance()->ReconnectInterval);
 
     mGateway = new Gateway();
-    mGateway->setIp(config_instance()->FloatGateway);
 
     mServer = new SwitchServer(mGateway, mLocal, mRemote);
 }
@@ -30,7 +27,31 @@ MasterSwitcherApp::~MasterSwitcherApp()
 int MasterSwitcherApp::run()
 {
     log_init();
+    tcp_init();
+
+    config_t *config = loadConfig();
+    if(NULL==config)
+    {
+        return -1;
+    }
+
+    mRemote->setLocalPC(mLocal);
+    mRemote->setIp(config->RemoteIP);
+    mRemote->setPort(config->HeartbeatPort);
+    mRemote->setReconnectInterval(config->ReconnectInterval);
+
+    mGateway->setIp(config->FloatGateway);
+
+    mLocal->setPort(config->HeartbeatPort);
+    mLocal->setEthernet(config->LocalEthernet);
+    mLocal->setFloatIP(config->FloatIP);
+    mLocal->setFloatGateway(config->FloatGateway);
+    mLocal->setFloatNetmask(config->FloatNetmask);
+
     int ret = mServer->start();
+
+    delete config;
+    tcp_free();
     log_free();
     return ret;
 }

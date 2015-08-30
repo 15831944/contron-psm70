@@ -25,16 +25,23 @@ public:
 
     void setHandler(ITcpClient *handler);
 
+    void start(bool needConnect);
+
 public:
+    bool isStarted();
     bool isConnected();
-    void receive(fd_set &fds);
+    void receive();
     int send(char *buffer, int size);
-    int connect();
     void tryBreakConnection();
+    int connect();
     void handleData(char *buffer, int size);
 
     int getBrokenTime();
     int getReconnectInterval();
+
+protected:
+    void updateBrokenTime();
+
 private:
     tcp_t mTcp;
     pthread_t receive_thread;
@@ -45,6 +52,7 @@ private:
     int mBrokenTime;
 
     ITcpClient *mHandler;
+    bool mStarted;
 };
 
 #endif // TCPCLIENT_H

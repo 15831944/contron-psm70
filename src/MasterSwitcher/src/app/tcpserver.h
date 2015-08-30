@@ -3,6 +3,7 @@
 
 #include "baseobject.h"
 #include "tcpclient.h"
+#include "itcpserver.h"
 
 class TcpServer : public BaseObject
 {
@@ -11,8 +12,9 @@ public:
     ~TcpServer();
 
     void setPort(int port);
+    void setHandler(ITcpServer *handler);
 
-    void start();
+    int start();
     bool checkStarted();
     void waitForNewConnection();
 
@@ -23,6 +25,8 @@ private:
     int mPort;
     tcp_t mTcp;
     pthread_t receive_thread;
+    ITcpServer *mHandler;
+    bool mStarted;
 
 };
 

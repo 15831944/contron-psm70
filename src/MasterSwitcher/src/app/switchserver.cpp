@@ -5,10 +5,8 @@
 SwitchServer::SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote)
     : IGateway()
     , IRemotePC()
-    , mGateway(gateway), mLocal(local), mRemote(remote)
+    , mLocal(local), mRemote(remote), mGateway(gateway)
 {
-    mGateway->setStateChange(this);
-    mRemote->setHandler(this);
 }
 
 SwitchServer::~SwitchServer()
@@ -18,6 +16,10 @@ SwitchServer::~SwitchServer()
 
 int SwitchServer::start()
 {
+    mGateway->setStateChange(this);
+    mRemote->setHandler(this);
+
+    mLocal->start();
     mGateway->start();
     mRemote->start();
 
@@ -31,7 +33,10 @@ int SwitchServer::start()
 
 void SwitchServer::gatewayStateChanged()
 {
-    switchMaster();
+    if(GATEWAY_OFFLINE==mGateway->getState())
+    {
+        mLocal->makeSlave();
+    }
 }
 
 void SwitchServer::canBeMaster()

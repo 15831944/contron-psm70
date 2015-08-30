@@ -22,7 +22,11 @@ TcpServer::TcpServer()
     :BaseObject()
 {
     memset(&mTcp, 0, sizeof(tcp_t));
+    sprintf(mTcp.hostname, "0.0.0.0");
+    mTcp.fd = -1;
     mTcp.local_if = 1;
+
+    mStarted = false;
 
     int ret;
     THREAD_CREATE(&receive_thread, tcpserver_receive_thread, this, ret);
@@ -44,9 +48,29 @@ void TcpServer::setPort(int port)
     leave();
 }
 
-void TcpServer::start()
+void TcpServer::setHandler(ITcpServer *handler)
 {
+    enter();
+    mHandler = handler;
+    leave();
+}
 
+int TcpServer::start()
+{
+    int ret = 0;
+
+    enter();
+    mTcp.port = mPort;
+    tcp_connect(&mTcp);
+    ret = tcp_isvalid(&mTcp);
+    printf("listen %d %s \n",  mTcp.port, ret?"success":"fail");
+    if(ret)
+    {
+        mStarted = true;
+    }
+    leave();
+
+    return ret;
 }
 
 bool TcpServer::checkStarted()
@@ -54,7 +78,7 @@ bool TcpServer::checkStarted()
     bool result = false;
 
     enter();
-    if(tcp_isvalid(&mTcp))
+    if(mStarted && tcp_isvalid(&mTcp))
     {
         result = true;
     }
@@ -88,13 +112,13 @@ void TcpServer::waitForNewConnection()
 
                 struct sockaddr_in in;
                 memset(&in, 0, sizeof(struct sockaddr_in));
-                unsigned int in_len = sizeof(struct sockaddr_in);
+                socklen_t in_len = sizeof(struct sockaddr_in);
                 in_fd=accept(mTcp.fd, (struct sockaddr *)(&in), &in_len);
                 if(0<(int)(in_fd))
                 {
                     char *ip = inet_ntoa(in.sin_addr);
                     USHORT port = ntohs(in.sin_port);
-                    printf("station client connect from %s:%u ...\n", ip, port);
+                    printf("connect from %s:%u ...\n", ip, port);
                     addNewConnection(ip, port, in_fd);
                 }
             }//receive
@@ -110,6 +134,12 @@ void TcpServer::addNewConnection(char *ip, int port, SOCKET_HANDLE fd)
     client->setIp(ip);
     client->setPort(port);
 
+    if(NULL!=mHandler)
+    {
+        mHandler->addNewClient(client);
+    }
+
     client->setFd(fd);
+    client->start(false);
 }
 

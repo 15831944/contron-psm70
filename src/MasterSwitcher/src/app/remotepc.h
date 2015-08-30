@@ -47,6 +47,7 @@ public:
     void tcpClientConnected(void *tcp);
     void tcpClientDisconnected(void *tcp);
     void tcpClientReceiveData(void *tcp, char *buffer, int size);
+    void tcpClientError(void *tcp);
 
 public:
     bool execPing();
@@ -59,12 +60,15 @@ protected:
     void enableHeartbeat();
     void disenableHeartbeat();
     void timePointChanged();
+    void clearConnectCount();
+    void handleConnectCount();
 
 private:
     LocalPC *mLocal;
     char *mIp;
     int mPort;
     int mReconnectInterval;
+    int mConnectCount;
 
     pthread_t mHeartbeatThread[1];
 

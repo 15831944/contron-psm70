@@ -6,41 +6,47 @@
 #include "sys/platform.h"
 #include "log.h"
 
+#include "heartbeatprotocol.h"
+#include "heartbeat.h"
+#include "utils.h"
+
 #if WIN32
-#define SWITCH_SCRIPT "scripts/onmaster.bat"
+#define SWITCH_SCRIPT "../scripts/onmaster.bat"
 #define SWITCH_COMMAND \
     "call "SWITCH_SCRIPT
 #else
-#define SWITCH_SCRIPT "scripts/onmaster.sh"
+#define SWITCH_SCRIPT "../scripts/onmaster.sh"
 #define SWITCH_COMMAND \
     ". "SWITCH_SCRIPT
 #endif
 
 LocalPC::LocalPC()
     :BaseObject()
+    , ITcpServer()
+    , ITcpClient()
 {
     mState = LOCAL_SLAVE;
     mEthernet = "bond0";
     mFloatIP = "10.7.5.27";
     mFloatGateway = "10.7.5.254";
+    mFloatNetmask = "255.255.255.0";
 
     GET_TIME(mSetupTime);
 
-    if(hasFloatIP()&&floatGatewayOnline())
-    {
-        mState = LOCAL_MASTER;
-    }
+    mTcpServer = new TcpServer();
+    mTcpServer->setHandler(this);
 }
 
 LocalPC::~LocalPC()
 {
-
+    delete mTcpServer;
 }
 
 void LocalPC::setFloatIP(char *floatIP)
 {
     enter();
     mFloatIP = floatIP;
+    printf("[LOCAL]float ip:%s\n", mFloatIP);
     leave();
 }
 
@@ -48,6 +54,15 @@ void LocalPC::setFloatGateway(char *gateway)
 {
     enter();
     mFloatGateway = gateway;
+    printf("[LOCAL]float gateway:%s\n", mFloatGateway);
+    leave();
+}
+
+void LocalPC::setFloatNetmask(char *netmask)
+{
+    enter();
+    mFloatNetmask = netmask;
+    printf("[LOCAL]float netmask:%s\n", mFloatNetmask);
     leave();
 }
 
@@ -55,6 +70,7 @@ void LocalPC::setEthernet(char *ethernet)
 {
     enter();
     mEthernet = ethernet;
+    printf("[LOCAL]ethernet:%s\n", mEthernet);
     leave();
 }
 
@@ -62,6 +78,21 @@ void LocalPC::setPort(int port)
 {
     enter();
     mPort = port;
+    printf("[LOCAL]heartbeat port:%d\n", mPort);
+    leave();
+}
+
+void LocalPC::start()
+{
+    enter();
+
+    if(hasFloatIP()&&floatGatewayOnline())
+    {
+        mState = LOCAL_MASTER;
+    }
+
+    mTcpServer->setPort(mPort);
+    mTcpServer->start();
     leave();
 }
 
@@ -86,7 +117,7 @@ void LocalPC::makeMaster()
     APP_LOG("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
     printf("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
     Ipconfig ipconfig;
-    if(ipconfig.addIP(mEthernet, mFloatIP))
+    if(ipconfig.addIP(mEthernet, mFloatIP, mFloatNetmask, mFloatGateway))
     {
         APP_LOG("[LOCAL]add ip ok\n");
         printf("[LOCAL]add ip ok\n");
@@ -146,7 +177,56 @@ double LocalPC::getSetupTime()
     result = mSetupTime;
     leave();
 
-    result = result;
+    return result;
+}
+
+void LocalPC::addNewClient(void *tcp)
+{
+    TcpClient *client = (TcpClient *)tcp;
+    client->setHandler(this);
+}
+
+void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
+{    
+    printf("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
+    HeartbeatProtocol protocol;
+    Heartbeat *hb = protocol.find(buffer, size);
+    bool found = false;
+    if(hb!=NULL)
+    {
+        delete hb;
+
+        found = true;
+    }
+    if(found)
+    {
+        char *p = NULL;
+        int size = 0;
+        HeartbeatProtocol protocol;
+        bool isSlave = (getState()==LOCAL_SLAVE);
+        double timePoint = getSetupTime();
+        Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
+        if(NULL!=t)
+        {
+            if(t->makeBuffer(&p, size))
+            {
+                TcpClient *client = (TcpClient *)tcp;
+                client->send(p, size);
+                delete p;
+            }
+        }
+    }
+}
+
+void LocalPC::tcpClientConnected(void *tcp)
+{
+    UN_USE(tcp);
+}
+
+void LocalPC::tcpClientDisconnected(void *tcp)
+{
+    TcpClient *client = (TcpClient *)tcp;
+    delete client;
 }
 
 bool LocalPC::floatIPOnline()

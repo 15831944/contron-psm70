@@ -3,11 +3,11 @@
 #include "sys/platform.h"
 
 #if WIN32
-#define PING_SCRIPT "scripts/ping.bat"
+#define PING_SCRIPT "../scripts/ping.bat"
 #define PING_COMMAND \
     "call "PING_SCRIPT" %s %d"
 #else
-#define PING_SCRIPT "scripts/ping.sh"
+#define PING_SCRIPT "../scripts/ping.sh"
 #define PING_COMMAND \
     ". "PING_SCRIPT" %s %d"
 #endif

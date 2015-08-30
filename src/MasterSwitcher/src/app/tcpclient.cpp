@@ -1,14 +1,17 @@
 #include "tcpclient.h"
 
+#include "utils.h"
+
 THREAD_API tcpclient_guard_thread(void *param)
 {
     TcpClient *tcp = (TcpClient *)param;
     int idle = 500;
     while(true)
     {
+        bool started = tcp->isStarted();
         bool connected = tcp->isConnected();
         bool enableReconnect = tcp->getEnableReconnect();
-        if((!connected)&&enableReconnect)
+        if(started&&(!connected)&&enableReconnect)
         {
             int current;
             GET_TIME(current);
@@ -31,38 +34,16 @@ THREAD_API tcpclient_guard_thread(void *param)
 THREAD_API tcpclient_receive_thread(void *param)
 {
     TcpClient *tcp = (TcpClient *)param;
-    fd_set fds;
     while(true)
     {
+        bool started = tcp->isStarted();
         bool connected = tcp->isConnected();
-        if(!connected)
+        if((!started)||(!connected))
         {
             Sleep(10);
             continue;
         }
-        int hifd = 0;
-        FD_ZERO(&fds);
-        int fd = tcp->getFd();
-        FD_SET(fd, &fds);
-        hifd = MAX(hifd, fd);
-        if(0==hifd)
-        {
-            Sleep(10);
-            continue;
-        }
-
-        //设置等待时间100ms
-        struct timeval tv;
-        tv.tv_sec =0;
-        tv.tv_usec = 100000;
-
-        int ret = select(hifd+1, &fds, NULL, NULL, &tv);
-        if((-1==ret)||(0>=ret))
-        {
-            continue;
-        }
-        tcp->receive(fds);
-
+        tcp->receive();
     }//true
 
     return NULL;
@@ -73,6 +54,7 @@ TcpClient::TcpClient()
 {
     memset(&mTcp, 0, sizeof(tcp_t));
 
+    mStarted = false;
     mReconnectInterval = 5;
 
     int ret;
@@ -123,30 +105,45 @@ void TcpClient::setFd(SOCKET_HANDLE fd)
     leave();
 }
 
-void TcpClient::receive(fd_set &fds)
+void TcpClient::receive()
 {
-    int fd = getFd();
-    enter();
-    bool received = FD_ISSET(fd, &fds);
+    fd_set fds;
+    FD_ZERO(&fds);
 
-    if(received)
+    enter();
+
+    SOCKET_HANDLE fd = mTcp.fd;
+    FD_SET(fd, &fds);
+
+    //设置等待时间100ms
+    struct timeval tv;
+    tv.tv_sec =0;
+    tv.tv_usec = 100000;
+
+    int ret = select(fd+1, &fds, NULL, NULL, &tv);
+    if(0<ret)
     {
+        bool received = FD_ISSET(fd, &fds);
+        if(received)
+        {
 #define MAXTCPSIZE 1024
-        char buffer[MAXTCPSIZE] = {0};
-        int len = 0;
-        len = recv(fd, buffer, sizeof(buffer), 0);
-        if(0<len)
-        {
-            // handle data here.
-            handleData(buffer, len);
-        }
-        else
-        {
-            // connection broken.
-            tryBreakConnection();
-        }
+            char buffer[MAXTCPSIZE] = {0};
+            int len = 0;
+            len = recv(fd, buffer, sizeof(buffer), 0);
+            if(0<len)
+            {
+                // handle data here.
+                handleData(buffer, len);
+            }
+            else
+            {
+                // connection broken.
+                tryBreakConnection();
+            }
 #undef MAXTCPSIZE
-    }//receive
+        }//receive
+    }
+
     leave();
 }
 
@@ -158,7 +155,8 @@ int TcpClient::send(char *buffer, int size)
     }
     bool sended = false;
 
-    enter();
+    enter();    
+    printf("[TCP CLIENT]send:\n%s\n", buffer_format(buffer, size));
     int ret = tcp_send(&mTcp, buffer, size);
     sended = (size == ret);
     leave();
@@ -173,11 +171,22 @@ int TcpClient::connect()
     enter();
     tcp_connect(&mTcp);
     ret = tcp_isvalid(&mTcp);
+    printf("connect %s:%d %s \n", mTcp.hostname, mTcp.port, ret?"success":"fail");
     leave();
-
-    if(ret&&NULL!=mHandler)
+    if(NULL!=mHandler)
     {
-        mHandler->tcpClientConnected(this);
+        if(ret)
+        {
+            mHandler->tcpClientConnected(this);
+        }
+        else
+        {
+            mHandler->tcpClientError(this);
+        }
+    }
+    if(!ret)
+    {
+        updateBrokenTime();
     }
 
     return ret;
@@ -187,8 +196,8 @@ void TcpClient::tryBreakConnection()
 {
     enter();
     tcp_close(&mTcp);
-    GET_TIME(mBrokenTime);
     leave();
+    updateBrokenTime();
     if(NULL!=mHandler)
     {
         mHandler->tcpClientDisconnected(this);
@@ -197,6 +206,7 @@ void TcpClient::tryBreakConnection()
 
 void TcpClient::handleData(char *buffer, int size)
 {
+    printf("[TCP CLIENT]receive:\n%s\n", buffer_format(buffer, size));
     if(NULL!=mHandler)
     {
         mHandler->tcpClientReceiveData(this, buffer, size);
@@ -226,6 +236,13 @@ int TcpClient::getReconnectInterval()
     return interval;
 }
 
+void TcpClient::updateBrokenTime()
+{
+    enter();
+    GET_TIME(mBrokenTime);
+    leave();
+}
+
 bool TcpClient::getEnableReconnect()
 {
     bool result = false;
@@ -250,7 +267,7 @@ void TcpClient::setIp(char *ip)
 {
     enter();
     memset(&mTcp.hostname, 0, sizeof(mTcp.hostname));
-    memcpy(ip, &mTcp.hostname, strlen(ip));
+    memcpy(&mTcp.hostname, ip, strlen(ip));
     leave();
 }
 
@@ -273,5 +290,27 @@ void TcpClient::setHandler(ITcpClient *handler)
     enter();
     mHandler = handler;
     leave();
+}
+
+void TcpClient::start(bool needConnect)
+{
+    enter();
+    mStarted = true;
+    if(needConnect)
+    {
+        connect();
+    }
+    leave();
+}
+
+bool TcpClient::isStarted()
+{
+    bool result = false;
+
+    enter();
+    result = mStarted;
+    leave();
+
+    return result;
 }
 

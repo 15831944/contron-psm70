@@ -143,7 +143,7 @@ android-no-sdk {
             }
         }
         !isEmpty(copyCommand) {
-            copyCommand = @echo Copying application data... && $$copyCommand
+            copyCommand = @echo Copying application data... && @echo OUT_PWD=$$OUT_PWD && $$copyCommand
             copydeploymentfolders.commands = $$copyCommand
             first.depends = $(first) copydeploymentfolders
             export(first.depends)

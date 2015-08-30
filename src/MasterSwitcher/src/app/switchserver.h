@@ -12,7 +12,7 @@ class SwitchServer :public IGateway, public IRemotePC
 {
 public:
     SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote);
-    ~SwitchServer();
+    virtual ~SwitchServer();
 
     int start();
 

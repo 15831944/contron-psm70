@@ -70,6 +70,8 @@ RemotePC::RemotePC()
     mIsSlave = true;
     mTimePoint = 0.0;
     mHandler = NULL;
+    mLocal = NULL;
+    mConnectCount = 0;
 
     mOnlineChecker = new OnlineChecker();
     mOnlineChecker->setOnlineChecker(this);
@@ -139,7 +141,7 @@ double RemotePC::getTimePoint()
     result = mTimePoint;
     leave();
 
-    return mTimePoint;
+    return result;
 
 }
 
@@ -192,7 +194,7 @@ void RemotePC::start()
     tcp->setReconnectInterval(mReconnectInterval);
     tcp->setEnableReconnect(true);
 
-    tcp->connect();
+    tcp->start(true);
 }
 
 bool RemotePC::isConnected()
@@ -239,6 +241,34 @@ void RemotePC::timePointChanged()
     }
 }
 
+void RemotePC::clearConnectCount()
+{
+    enter();
+    mConnectCount = 0;
+    leave();
+}
+
+void RemotePC::handleConnectCount()
+{
+    bool connectError = false;
+    enter();
+    int maxConnect = 3;
+    mConnectCount++;
+    if(maxConnect<=mConnectCount)
+    {
+        mConnectCount = 0;
+        connectError = true;
+    }
+    leave();
+    if(connectError)
+    {
+        if(NULL!=mHandler)
+        {
+            mHandler->canBeMaster();
+        }
+    }
+}
+
 void RemotePC::tryBreakConnection()
 {
     tcp->tryBreakConnection();
@@ -257,9 +287,11 @@ void RemotePC::heartbeat()
     Heartbeat *hb = protocol.makeHeartbeat(isSlave, timePoint);
     if(NULL!=hb)
     {
-        hb->makeBuffer(&p, size);
-        tcp->send(p, size);
-        delete p;
+        if(hb->makeBuffer(&p, size))
+        {
+            tcp->send(p, size);
+            delete p;
+        }
     }
 
     leave();
@@ -311,6 +343,7 @@ void RemotePC::clearHeartbeatCount()
 void RemotePC::tcpClientConnected(void *tcp)
 {
     UN_USE(tcp);
+    clearConnectCount();
     enableHeartbeat();
 }
 
@@ -337,6 +370,12 @@ void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
         setIsSlave(isSlave);
         setTimePoint(timePoint);
     }
+}
+
+void RemotePC::tcpClientError(void *tcp)
+{
+    UN_USE(tcp);
+    handleConnectCount();
 }
 
 

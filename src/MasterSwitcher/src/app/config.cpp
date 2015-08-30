@@ -1,42 +1,29 @@
 #include "config.h"
 
 #include "sys/platform.h"
+#include <ctype.h>
 
-#define _STR( s ) #s
-#define STR( s ) _STR(s)
-#define get_config_string( name )				\
+
+#define get_config_string( config, name )				\
     if( strcmp( key, #name ) == 0 )				\
     {							\
-        strcpy( self.name, value );			\
+        strcpy( config->name, value );			\
     }
-#define get_config_number( name )				\
+#define get_config_number( config, name )				\
     if( strcmp( key, #name ) == 0 )				\
     {							\
-        sscanf( value, "%i", &self.name );		\
+        sscanf( value, "%i", &config->name );		\
     }
 
-static bool init = false;
-config_t self;
-
-void config_init()
+config_t *loadConfig()
 {
-    memset(&self, 0, sizeof(config_t));
+    config_t *result = (config_t *)malloc(sizeof(config_t));
+    if(NULL==result)
+    {
+        return NULL;
+    }
+    memset(result, 0, sizeof(config_t));
 
-//    self.rt_id = 5678;
-//    strcpy(self.wf_server_ip, "127.0.0.1");
-//    self.wf_server_port = 5555;
-//    self.client_enable = 0;
-//    self.client_count = 0;
-//    strcpy(self.default_client_server_ip, "127.0.0.1");
-//    self.default_client_server_port = 9803;
-//    self.default_client_server_id = 1;
-//    self.server_enable = 0;
-//    self.server_port = 9801;
-
-}
-
-int config_load()
-{
     FILE *fp;
     char file[] = "../ini/config.ini";
     char s[1024];
@@ -72,27 +59,17 @@ int config_load()
             value[i] = 0;
         }
 
-        get_config_string( FloatIP );
-        get_config_string( FloatGateway );
-        get_config_string( RemoteIP );
+        get_config_string( result, LocalEthernet );
+        get_config_string( result, FloatIP );
+        get_config_string( result, FloatGateway );
+        get_config_string( result, FloatNetmask );
+        get_config_string( result, RemoteIP );
 
-        get_config_number( HeartbeatPort );
-        get_config_number( ReconnectInterval );
+        get_config_number( result, HeartbeatPort );
+        get_config_number( result, ReconnectInterval );
     }
 
     fclose(fp);
 
-    return NUMBER_TRUE;
-}
-
-config_t *config_instance()
-{
-    if(!init)
-    {
-        config_init();
-        config_load();
-        init = true;
-    }
-
-    return &self;
+    return result;
 }

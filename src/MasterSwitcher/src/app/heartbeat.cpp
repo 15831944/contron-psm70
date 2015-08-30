@@ -1,12 +1,14 @@
 #include "heartbeat.h"
 
 #include "sys/platform.h"
+#include "utils.h"
 
-static char HEADER[] = {0x7A, 0xA7, 0xA7, 0x7A};
+static UCHAR HEADER[] = {0x7A, 0xA7, 0xA7, 0x7A};
 static int CRC_SIZE = 1;
 static int LENGTH_SIZE = 1;
 static int LENGTH_POS = sizeof(HEADER);
-static int TIMEPOINT_POS = LENGTH_POS + 1;
+static int STATE_POS = LENGTH_POS + 1;
+static int TIMEPOINT_POS = STATE_POS + 1;
 
 Heartbeat::Heartbeat()
 {
@@ -35,10 +37,10 @@ bool Heartbeat::foundHeader(char *buffer, int size)
         return false;
     }
     char *p = buffer;
-    bool found = (((*(p))==HEADER[0])
-            &&((*(p+1))==HEADER[1])
-            &&((*(p+2))==HEADER[2])
-            &&((*(p+3))==HEADER[3])
+    bool found = ((UCHAR)((*(p))==HEADER[0])
+            &&((UCHAR)(*(p+1))==HEADER[1])
+            &&((UCHAR)(*(p+2))==HEADER[2])
+            &&((UCHAR)(*(p+3))==HEADER[3])
             );
     return found;
 }
@@ -59,7 +61,7 @@ void Heartbeat::setBuffer(char *buffer, int size)
         return;
     }
     memset(mBuffer, 0, size);
-    memcpy(buffer, mBuffer, size);
+    memcpy(mBuffer, buffer, size);
     mBufferSize = size;
 }
 
@@ -89,29 +91,52 @@ bool Heartbeat::makeFrame(char *buffer, int size)
 
 bool Heartbeat::makeBuffer(char **buffer, int &size)
 {
+    if(!isValid())
+    {
+        return false;
+    }
 
+    *buffer = (char *)malloc(mBufferSize);
+    if(NULL==*buffer)
+    {
+        return false;
+    }
+    char *p = *buffer;
+    memset(p, 0, mBufferSize);
+    memcpy(p, mBuffer, mBufferSize);
+    size = mBufferSize;
+
+    return true;
 }
 
 bool Heartbeat::setData(bool isSlave, double timePoint)
 {
     int len = minSizeOfFrame() + sizeof(UCHAR) + sizeof(double);
-    UCHAR *buffer = (UCHAR *)malloc(len);
+    char *buffer = (char *)malloc(len);
     if(NULL==buffer)
     {
         return false;
     }
     memset(buffer, 0, len);
 
-    memcpy(buffer, HEADER, sizeof(HEADER));
+    int size = sizeof(HEADER);
+
+    memcpy(buffer, HEADER, size);
+
+    size = len - LENGTH_POS;
+    buffer[LENGTH_POS] = size;
+
 
     UCHAR slave = isSlave;
-    buffer[LENGTH_POS] = slave;
+    buffer[STATE_POS] = slave;
 
     DOUBLE_CONVERTER t;
     t.d = timePoint;
 
+//    printf("value(%lf):%s\n", timePoint, buffer_format(t.bytes, sizeof(double)));
+
     UCHAR *p = (UCHAR *)t.bytes;
-    int size = sizeof(double);
+    size = sizeof(double);
     for(int i=0;i<size;i++)
     {
         *(buffer+TIMEPOINT_POS+i)=*(p++);
@@ -123,9 +148,14 @@ bool Heartbeat::setData(bool isSlave, double timePoint)
         sum += (UCHAR)(*(buffer+i));
     }
 
+//    printf("sum:%02X\n", sum);
 
-    *(buffer+len) = sum;
-    setBuffer((char *)buffer, len);
+
+    *(buffer+len-1) = sum;
+
+//    printf("buffer:%s\n", buffer_format(buffer, len));
+
+    setBuffer(buffer, len);
 
     delete buffer;
 

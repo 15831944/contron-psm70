@@ -3,11 +3,11 @@
 #include "sys/platform.h"
 
 #if WIN32
-#define IP_SCRIPT "scripts/ip.bat"
+#define IP_SCRIPT "../scripts/ip.bat"
 #define IP_COMMAND \
-    "call "IP_SCRIPT" %s %s %s"
+    "call "IP_SCRIPT" %s %s %s %s %s %s"
 #else
-#define IP_SCRIPT "scripts/ip.sh"
+#define IP_SCRIPT "../scripts/ip.sh"
 #define IP_COMMAND \
     ". "IP_SCRIPT" %s %s %s %s %s %s"
 #endif
@@ -50,7 +50,7 @@ bool Ipconfig::delIP(char *ethernet, char *ip)
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));
-    sprintf(command, IP_COMMAND, "del", ip, ethernet);
+    sprintf(command, IP_COMMAND, "del", ip, ethernet, "", "", "", "");
     FILE *f;
     if((f = popen(command, "r")) == NULL)
       return false;
@@ -73,7 +73,7 @@ bool Ipconfig::hasIP(char *ip)
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));
-    sprintf(command, IP_COMMAND, "search", ip);
+    sprintf(command, IP_COMMAND, "search", ip, "", "", "", "", "");
     FILE *f;
     if((f = popen(command, "r")) == NULL)
       return false;
