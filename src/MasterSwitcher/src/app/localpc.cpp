@@ -113,6 +113,10 @@ void LocalPC::makeMaster()
     printf("[LOCAL]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
     if(LOCAL_MASTER==getState())
     {
+        if(!floatIPOnline())
+        {
+            makeSlave();
+        }
         return;
     }
 
