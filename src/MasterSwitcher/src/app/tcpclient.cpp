@@ -8,23 +8,16 @@ THREAD_API tcpclient_guard_thread(void *param)
     int idle = 500;
     while(true)
     {
-        bool started = tcp->isStarted();
-        bool connected = tcp->isConnected();
-        bool enableReconnect = tcp->getEnableReconnect();
-        if(started&&(!connected)&&enableReconnect)
-        {
-            int current;
-            GET_TIME(current);
-            int brokenTime = tcp->getBrokenTime();
-            int interval = tcp->getReconnectInterval();
+        Sleep(10);
+        THREAD_WAITEXIT();
 
-            int timeout = brokenTime + interval;
-            bool outOfTime = (current >= (timeout));
-            if(outOfTime)
-            {
-                tcp->connect();
-            }
+        if(tcp->isExiting())
+        {
+            break;
         }
+
+        tcp->tryReconnect();
+
         Sleep(idle);
     }
     return NULL;
@@ -36,11 +29,18 @@ THREAD_API tcpclient_receive_thread(void *param)
     TcpClient *tcp = (TcpClient *)param;
     while(true)
     {
+        Sleep(10);
+        THREAD_WAITEXIT();
+
+        if(tcp->isExiting())
+        {
+            break;
+        }
+
         bool started = tcp->isStarted();
         bool connected = tcp->isConnected();
         if((!started)||(!connected))
         {
-            Sleep(10);
             continue;
         }
         tcp->receive();
@@ -55,7 +55,12 @@ TcpClient::TcpClient()
     memset(&mTcp, 0, sizeof(tcp_t));
 
     mStarted = false;
+    mExiting = false;
     mReconnectInterval = 5;
+    mHandler = NULL;
+
+    mEnableReconnect = true;
+    mBrokenTime = 0;
 
     int ret;
     THREAD_CREATE(&receive_thread, tcpclient_receive_thread, this, ret);
@@ -72,8 +77,10 @@ TcpClient::TcpClient()
 
 TcpClient::~TcpClient()
 {
+    enter();
     THREAD_CLOSE(guard_thread);
     THREAD_CLOSE(receive_thread);
+    leave();
 }
 
 bool TcpClient::isConnected()
@@ -299,6 +306,47 @@ void TcpClient::start(bool needConnect)
     if(needConnect)
     {
         connect();
+    }
+    leave();
+}
+
+void TcpClient::close()
+{
+    enter();
+    mExiting = true;
+    leave();
+
+    Sleep(50);
+}
+
+bool TcpClient::isExiting()
+{
+    bool result = false;
+    enter();
+    result = mExiting;
+    leave();
+    return result;
+}
+
+void TcpClient::tryReconnect()
+{
+    enter();
+    bool started = isStarted();
+    bool connected = isConnected();
+    bool enableReconnect = getEnableReconnect();
+    if(started&&(!connected)&&enableReconnect)
+    {
+        int current;
+        GET_TIME(current);
+        int brokenTime = getBrokenTime();
+        int interval = getReconnectInterval();
+
+        int timeout = brokenTime + interval;
+        bool outOfTime = (0!=brokenTime)&&(current >= (timeout));
+        if(outOfTime)
+        {
+            connect();
+        }
     }
     leave();
 }

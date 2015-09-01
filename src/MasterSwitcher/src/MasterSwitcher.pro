@@ -17,7 +17,7 @@ SOURCES += \
 }
 
 #输出目录
-OUT_DIR = $$absolute_path($$OUT_PWD/../../../)
+OUT_DIR = $$OUT_PWD/../../../
 OUT_PWD = $$OUT_DIR
 
 #程序目录

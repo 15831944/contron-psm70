@@ -3,6 +3,8 @@
 #include "ping.h"
 #include "heartbeatprotocol.h"
 
+#include "utils.h"
+
 #define MAX_MISSED_HEARTBEAT 3
 
 
@@ -14,6 +16,9 @@ THREAD_API remote_heartbeat_thread(void *param)
     int count = 1;
     while(true)
     {
+        Sleep(10);
+        THREAD_WAITEXIT();
+
         bool connected = remote->isConnected();
         if(!connected)
         {
@@ -25,6 +30,7 @@ THREAD_API remote_heartbeat_thread(void *param)
         {
             count--;
 
+            printf("[RemotePC]fast heartbeat: %d\n", count);
             remote->heartbeat();
 
             if(!count)
@@ -51,10 +57,12 @@ THREAD_API remote_heartbeat_thread(void *param)
             if(outOfTime)
             {
                 remote->heartbeat();
+                remote->updateSendTime();
             }
         }
         Sleep(idle);
     }//while
+    printf("[RemotePC]heartbeat thread exit\n");
     return NULL;
 }
 
@@ -199,7 +207,11 @@ void RemotePC::start()
 
 bool RemotePC::isConnected()
 {
-    return tcp->isConnected();
+    bool result = false;
+    enter();
+    result = tcp->isConnected();
+    leave();
+    return result;
 }
 
 void RemotePC::enableHeartbeat()
@@ -271,7 +283,9 @@ void RemotePC::handleConnectCount()
 
 void RemotePC::tryBreakConnection()
 {
+    enter();
     tcp->tryBreakConnection();
+    leave();
 }
 
 void RemotePC::heartbeat()
@@ -302,6 +316,7 @@ bool RemotePC::isSendFail()
     bool result = true;
 
     enter();
+    printf("[RemotePC]is send fail:%d\n", mHeartbeatCount);
     result = (MAX_MISSED_HEARTBEAT<=mHeartbeatCount);
     leave();
 
@@ -311,16 +326,16 @@ bool RemotePC::isSendFail()
 
 bool RemotePC::isSendTime()
 {
-    if(0==mSendTime)
-    {
-        return false;
-    }
     bool result = false;
-    int now;
-    GET_TIME(now);
 
     enter();
-    result = (now>=(mSendTime+mSendInterval));
+    if(0!=mSendTime)
+    {
+        int now;
+        GET_TIME(now);
+
+        result = (now>=(mSendTime+mSendInterval));
+    }
     leave();
 
     return result;
@@ -330,12 +345,14 @@ void RemotePC::updateSendTime()
 {
     enter();
     GET_TIME(mSendTime);
+    printf("[RemotePC]update send time:%d\n", mSendTime);
     leave();
 }
 
 void RemotePC::clearHeartbeatCount()
 {
     enter();
+    printf("[RemotePC]clear heartbeat count\n");
     mHeartbeatCount = 0;
     leave();
 }
@@ -343,6 +360,7 @@ void RemotePC::clearHeartbeatCount()
 void RemotePC::tcpClientConnected(void *tcp)
 {
     UN_USE(tcp);
+    printf("[RemotePC]connected\n");
     clearConnectCount();
     enableHeartbeat();
 }
@@ -350,12 +368,16 @@ void RemotePC::tcpClientConnected(void *tcp)
 void RemotePC::tcpClientDisconnected(void *tcp)
 {
     UN_USE(tcp);
+    printf("[RemotePC]disconnected\n");
     disenableHeartbeat();
 }
 
 void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
     UN_USE(tcp);
+    enter();
+
+    printf("[RemotePC]receive:\n%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *p = protocol.find(buffer, size);
     if(p!=NULL)

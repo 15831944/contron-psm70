@@ -189,8 +189,10 @@ double LocalPC::getSetupTime()
 
 void LocalPC::addNewClient(void *tcp)
 {
+    enter();
     TcpClient *client = (TcpClient *)tcp;
     client->setHandler(this);
+    leave();
 }
 
 void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)

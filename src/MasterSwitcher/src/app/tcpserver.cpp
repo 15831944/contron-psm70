@@ -5,6 +5,14 @@ THREAD_API tcpserver_receive_thread(void *param)
     TcpServer *server = (TcpServer *)param;
     while(true)
     {
+        Sleep(10);
+        THREAD_WAITEXIT();
+
+        if(server->isExiting())
+        {
+            break;
+        }
+
         bool isvalid = server->checkStarted();
         if(!isvalid)
         {
@@ -27,6 +35,7 @@ TcpServer::TcpServer()
     mTcp.local_if = 1;
 
     mStarted = false;
+    mExiting = false;
 
     int ret;
     THREAD_CREATE(&receive_thread, tcpserver_receive_thread, this, ret);
@@ -73,6 +82,15 @@ int TcpServer::start()
     return ret;
 }
 
+void TcpServer::close()
+{
+    enter();
+    mExiting = true;
+    leave();
+
+    Sleep(20);
+}
+
 bool TcpServer::checkStarted()
 {
     bool result = false;
@@ -89,10 +107,11 @@ bool TcpServer::checkStarted()
 
 void TcpServer::waitForNewConnection()
 {
+    enter();
+
     fd_set fds;
     FD_ZERO(&fds);
 
-    enter();
     {
         FD_SET(mTcp.fd, &fds);
 
@@ -128,8 +147,18 @@ void TcpServer::waitForNewConnection()
 
 }
 
+bool TcpServer::isExiting()
+{
+    bool result = false;
+    enter();
+    result = mExiting;
+    leave();
+    return result;
+}
+
 void TcpServer::addNewConnection(char *ip, int port, SOCKET_HANDLE fd)
 {
+    enter();
     TcpClient *client = new TcpClient();
     client->setIp(ip);
     client->setPort(port);
@@ -141,5 +170,6 @@ void TcpServer::addNewConnection(char *ip, int port, SOCKET_HANDLE fd)
 
     client->setFd(fd);
     client->start(false);
+    leave();
 }
 

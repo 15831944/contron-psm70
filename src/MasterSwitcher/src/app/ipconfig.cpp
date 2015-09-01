@@ -22,7 +22,7 @@ Ipconfig::~Ipconfig()
 
 }
 
-bool Ipconfig::addIP(char *ethernet, char *ip, char *netmask, char *gateway, char *broadcast)
+bool Ipconfig::addIP(char *ethernet, char *ip, const char *netmask, const char *gateway, const char *broadcast)
 {
     char buffer[128];
     char command[128];
@@ -50,7 +50,7 @@ bool Ipconfig::delIP(char *ethernet, char *ip)
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));
-    sprintf(command, IP_COMMAND, "del", ip, ethernet, "", "", "", "");
+    sprintf(command, IP_COMMAND, "del", ip, ethernet, "", "", "");
     FILE *f;
     if((f = popen(command, "r")) == NULL)
       return false;
@@ -86,7 +86,7 @@ bool Ipconfig::hasIP(char *ip)
     memset(filestr, 0, sizeof(filestr));
     sprintf(filestr, "%s_%s", datestr, timestr);
 
-    sprintf(command, IP_COMMAND, "search", ip, filestr, "", "", "", "");
+    sprintf(command, IP_COMMAND, "search", ip, filestr, "", "", "");
     FILE *f;
     if((f = popen(command, "r")) == NULL)
       return false;

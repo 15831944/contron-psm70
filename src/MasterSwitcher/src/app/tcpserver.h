@@ -15,8 +15,13 @@ public:
     void setHandler(ITcpServer *handler);
 
     int start();
+    void close();
+
     bool checkStarted();
     void waitForNewConnection();
+
+public:
+    bool isExiting();
 
 protected:
     void addNewConnection(char *ip, int port, SOCKET_HANDLE fd);
@@ -27,6 +32,7 @@ private:
     pthread_t receive_thread;
     ITcpServer *mHandler;
     bool mStarted;
+    bool mExiting;
 
 };
 

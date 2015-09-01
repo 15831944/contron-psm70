@@ -8,7 +8,7 @@ public:
     Ipconfig();
     ~Ipconfig();
 
-    bool addIP(char *ethernet, char *ip, char *netmask="", char *gateway="", char *broadcast="");
+    bool addIP(char *ethernet, char *ip, const char *netmask="", const char *gateway="", const char *broadcast="");
     bool delIP(char *ethernet, char *ip);
     bool hasIP(char *ip);
 };

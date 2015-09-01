@@ -26,6 +26,10 @@ public:
     void setHandler(ITcpClient *handler);
 
     void start(bool needConnect);
+    void close();
+
+    bool isExiting();
+    void tryReconnect();
 
 public:
     bool isStarted();
@@ -53,6 +57,7 @@ private:
 
     ITcpClient *mHandler;
     bool mStarted;
+    bool mExiting;
 };
 
 #endif // TCPCLIENT_H
