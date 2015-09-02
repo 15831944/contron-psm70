@@ -27,7 +27,7 @@ signals:
     void log(const QString &text);
 
 public:
-    void addNewClient(void *tcp);
+    void addNewClient(char *ip, int port, SOCKET_HANDLE fd);
     void tcpClientReceiveData(void *tcp, char *buffer, int size);
     void tcpClientConnected(void *tcp);
     void tcpClientDisconnected(void *tcp);

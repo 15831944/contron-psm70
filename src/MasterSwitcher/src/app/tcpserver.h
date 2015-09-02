@@ -25,6 +25,7 @@ public:
 
 protected:
     void addNewConnection(char *ip, int port, SOCKET_HANDLE fd);
+    void setClientHandler(TcpClient *client, SOCKET_HANDLE fd);
 
 private:
     int mPort;

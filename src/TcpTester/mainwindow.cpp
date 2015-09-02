@@ -115,11 +115,22 @@ MainWindow *MainWindow::getSingletone()
     return self;
 }
 
-void MainWindow::addNewClient(void *tcp)
+void MainWindow::addNewClient(char *ip, int port, SOCKET_HANDLE fd)
 {
     enter();
-    TcpClient *client = (TcpClient *)tcp;
+    printf("[TcpServer]add client 1 \n");
+    TcpClient *client = new TcpClient();
+    printf("[TcpServer]add client 2 \n");
+    client->setIp(ip);
+    printf("[TcpServer]add client 3 \n");
+    client->setPort(port);
+    printf("[TcpServer]add client 4 \n");
     client->setHandler(this);
+    printf("[TcpServer]add client 6 \n");
+    client->setFd(fd);
+    printf("[TcpServer]add client 7 \n");
+    client->start(false);
+    printf("[TcpServer]add client 8 \n");
     leave();
 }
 
@@ -180,7 +191,7 @@ void MainWindow::tcpClientDisconnected(void *tcp)
 {
     TcpClient *client = (TcpClient *)tcp;
     enter();
-    if(client!=mClient)
+    if(client==mClient)
     {
         delete client;
     }

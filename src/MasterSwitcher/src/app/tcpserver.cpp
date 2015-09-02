@@ -159,17 +159,40 @@ bool TcpServer::isExiting()
 void TcpServer::addNewConnection(char *ip, int port, SOCKET_HANDLE fd)
 {
     enter();
-    TcpClient *client = new TcpClient();
-    client->setIp(ip);
-    client->setPort(port);
-
     if(NULL!=mHandler)
     {
-        mHandler->addNewClient(client);
+        mHandler->addNewClient(ip, port, fd);
     }
+    leave();
+    return;
+    printf("[TcpServer]add client 1 \n");
+    TcpClient *client = new TcpClient();
+    printf("[TcpServer]add client 2 \n");
+    client->setIp(ip);
+    printf("[TcpServer]add client 3 \n");
+    client->setPort(port);
+    printf("[TcpServer]add client 4 \n");
 
-    client->setFd(fd);
-    client->start(false);
+    setClientHandler(client, fd);
+
+
+//    client->setFd(fd);
+//    client->start(false);
+}
+
+void TcpServer::setClientHandler(TcpClient *client, SOCKET_HANDLE fd)
+{
+    enter();
+    if(NULL!=mHandler)
+    {
+        printf("[TcpServer]add client 5 \n");
+//        mHandler->addNewClient(client);
+        printf("[TcpServer]add client 6 \n");
+        client->setFd(fd);
+        printf("[TcpServer]add client 7 \n");
+        client->start(false);
+        printf("[TcpServer]add client 8 \n");
+    }
     leave();
 }
 

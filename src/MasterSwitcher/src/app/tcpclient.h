@@ -29,7 +29,6 @@ public:
     void close();
 
     bool isExiting();
-    void tryReconnect();
 
 public:
     bool isStarted();
