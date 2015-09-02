@@ -14,7 +14,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public BaseObject, public ITcpServer/*, public ITcpClient*/
+class MainWindow : public QMainWindow, public BaseObject, public ITcpServer, public ITcpClient
 {
     Q_OBJECT
 

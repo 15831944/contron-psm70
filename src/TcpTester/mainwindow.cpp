@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     BaseObject(),
     ITcpServer(),
-//    ITcpClient(),
+    ITcpClient(),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -53,37 +53,57 @@ MainWindow *MainWindow::getSingletone()
 
 void MainWindow::addNewClient(void *tcp)
 {
-//    enter();
-//    ITcpClient **handler = (ITcpClient **)(tcp);
-//    *handler = this;
-//    leave();
+    enter();
+    ITcpClient **handler = (ITcpClient **)(tcp);
+    *handler = this;
+    leave();
 }
 
 void MainWindow::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
+    enter();
 
+    APP_LOG("receive:\t%s\n", buffer_format(buffer, size));
+    HeartbeatProtocol protocol;
+    Heartbeat *hb = protocol.find(buffer, size);
+    if(hb!=NULL)
+    {
+        delete hb;
+
+        TcpClient *client = (TcpClient *)tcp;
+
+        char *p = NULL;
+        int size = 0;
+        bool isSlave = false;
+        double timePoint;
+        GET_TIME(timePoint);
+        Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
+        if(NULL!=t)
+        {
+            if(t->makeBuffer(&p, size))
+            {
+                client->send(p, size);
+                delete p;
+            }
+        }
+    }
+    leave();
 }
 
 void MainWindow::tcpClientConnected(void *tcp)
 {
-//    TcpClient *client = (TcpClient *)tcp;
-//    enter();
-
-//    delete client;
-//    leave();
+    UN_USE(tcp);
 }
 
 void MainWindow::tcpClientDisconnected(void *tcp)
 {
-//    TcpClient *client = (TcpClient *)tcp;
-//    enter();
-//    leave();
-//    delete client;
+    TcpClient *client = (TcpClient *)tcp;
+    delete client;
 }
 
 void MainWindow::tcpClientError(void *tcp)
 {
-
+    UN_USE(tcp);
 }
 
 void MainWindow::writeLog(const QString &text)

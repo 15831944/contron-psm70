@@ -164,8 +164,6 @@ void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
         }
     }
     leave();
-
-
 }
 
 void RemotePC::tcpClientConnected(void *tcp)

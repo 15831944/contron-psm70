@@ -334,7 +334,10 @@ void TcpClient::close()
 {
     enter();
     mExiting = true;
-    tcp_close(&mTcp);
+    if(tcp_isvalid(&mTcp))
+    {
+        tcp_close(&mTcp);
+    }
     leave();
 
     Sleep(50);

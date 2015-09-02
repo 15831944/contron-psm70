@@ -9,7 +9,7 @@ public:
     ITcpServer();
     ~ITcpServer();
 
-    virtual void addNewClient(char *ip, int port, SOCKET_HANDLE fd)=0;
+    virtual void addNewClient(void *tcp)=0;
 
 };
 

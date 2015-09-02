@@ -28,3 +28,9 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
+unix {
+CONFIG(debug, debug|release) {
+QMAKE_CFLAGS += -g
+}
+}
+

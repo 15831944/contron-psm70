@@ -5,7 +5,10 @@
 #include "tcpclient.h"
 #include "itcpserver.h"
 
-class TcpServer : public BaseObject
+#include <vector>
+using namespace std;
+
+class TcpServer : public BaseObject, public ITcpClient
 {
 public:
     TcpServer();
@@ -22,18 +25,27 @@ public:
 
 public:
     bool isExiting();
+    void deleteCloseClient();
 
 protected:
-    void addNewConnection(char *ip, int port, SOCKET_HANDLE fd);
-    void setClientHandler(TcpClient *client, SOCKET_HANDLE fd);
-
+    //ITcpServer
+    void addNewConnection(void *tcp);
+public:
+    //ITcpClient
+    void tcpClientReceiveData(void *tcp, char *buffer, int size);
+    void tcpClientConnected(void *tcp);
+    void tcpClientDisconnected(void *tcp);
+    void tcpClientError(void *tcp);
 private:
     int mPort;
     tcp_t mTcp;
     pthread_t receive_thread;
+    pthread_t guard_thread;
     ITcpServer *mHandler;
     bool mStarted;
     bool mExiting;
+
+    vector<TcpClient *> mClients;
 
 };
 

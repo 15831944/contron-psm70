@@ -24,7 +24,7 @@ THREAD_API remote_heartbeat_thread(void *param)
         {
             break;  //外部断开连接
         }
-
+printf("[[RemotePC]check connected pass\n]");
         //1.快速发送心跳count次，确认连接，间隔1秒
         if(count)
         {
@@ -195,7 +195,7 @@ void RemotePC::setIsSlave(bool isSlave)
 
 void RemotePC::start()
 {
-    mOnlineChecker->exec();
+//    mOnlineChecker->exec();
 
     tcp->setIp(mIp);
     tcp->setPort(mPort);
@@ -388,9 +388,12 @@ void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 
         clearHeartbeatCount();
 
+        printf("[RemotePC]after clear heartbeat count\n");
         //注意调用顺序
         setIsSlave(isSlave);
+        printf("[RemotePC]after clear heartbeat count 1\n");
         setTimePoint(timePoint);
+        printf("[RemotePC]after clear heartbeat count 2\n");
     }
 }
 
