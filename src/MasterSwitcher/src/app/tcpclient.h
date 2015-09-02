@@ -6,6 +6,8 @@
 #include "conn/tcp.h"
 #include "itcpclient.h"
 
+//1. TCP连接不成功,耗时22秒左右
+
 class TcpClient : public BaseObject
 {
 public:

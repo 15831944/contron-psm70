@@ -2,6 +2,13 @@
 
 #include "utils.h"
 
+#if QT
+#include "log.h"
+#define DEBUG_OUTPUT APP_LOG
+#else
+#define DEBUG_OUTPUT printf
+#endif
+
 THREAD_API tcpclient_guard_thread(void *param)
 {
     TcpClient *tcp = (TcpClient *)param;
@@ -30,6 +37,7 @@ THREAD_API tcpclient_guard_thread(void *param)
             bool outOfTime = (current >= (timeout));
             if(outOfTime)
             {
+                DEBUG_OUTPUT("[TCP CLIENT]retry:brokenTime=%d\tinterval=%d\tnow=%d\n", brokenTime, interval, current);
                 tcp->connect();
             }
         }
@@ -89,7 +97,6 @@ TcpClient::TcpClient()
 
 TcpClient::~TcpClient()
 {
-    close();
 }
 
 bool TcpClient::isConnected()
@@ -172,7 +179,7 @@ int TcpClient::send(char *buffer, int size)
     bool sended = false;
 
     enter();    
-    printf("[TCP CLIENT]send:\n%s\n", buffer_format(buffer, size));
+    DEBUG_OUTPUT("[TCP CLIENT]send:\n%s\n", buffer_format(buffer, size));
     int ret = tcp_send(&mTcp, buffer, size);
     sended = (size == ret);
     leave();
@@ -185,15 +192,15 @@ int TcpClient::connect()
     int ret = 0;
 
     enter();
-    printf("[TcpClient]connect 1\n");
+    DEBUG_OUTPUT("[TcpClient]connect 1\n");
     tcp_connect(&mTcp);
-    printf("[TcpClient]connect 2\n");
+    DEBUG_OUTPUT("[TcpClient]connect 2\n");
     ret = tcp_isvalid(&mTcp);
-    printf("connect %s:%d %s \n", mTcp.hostname, mTcp.port, ret?"success":"fail");
+    DEBUG_OUTPUT("connect %s:%d %s \n", mTcp.hostname, mTcp.port, ret?"success":"fail");
     leave();
     if(NULL!=mHandler)
     {
-        printf("[TcpClient]connect 3\n");
+        DEBUG_OUTPUT("[TcpClient]connect 3\n");
         if(ret)
         {
             mHandler->tcpClientConnected(this);
@@ -225,7 +232,7 @@ void TcpClient::tryBreakConnection()
 
 void TcpClient::handleData(char *buffer, int size)
 {
-    printf("[TCP CLIENT]receive:\n%s\n", buffer_format(buffer, size));
+    DEBUG_OUTPUT("[TCP CLIENT]receive:\n%s\n", buffer_format(buffer, size));
     if(NULL!=mHandler)
     {
         mHandler->tcpClientReceiveData(this, buffer, size);
@@ -259,6 +266,7 @@ void TcpClient::updateBrokenTime()
 {
     enter();
     GET_TIME(mBrokenTime);
+    DEBUG_OUTPUT("[TCP CLIENT]updateBrokenTime:broken time=%d\n", mBrokenTime);
     leave();
 }
 
@@ -326,11 +334,12 @@ void TcpClient::close()
 {
     enter();
     mExiting = true;
-    if(isConnected())
-    {
-        tcp_close(&mTcp);
-    }
+    tcp_close(&mTcp);
+    leave();
+
     Sleep(50);
+
+    enter();
     THREAD_CLOSE(guard_thread);
     THREAD_CLOSE(receive_thread);
     leave();

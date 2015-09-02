@@ -9,97 +9,33 @@
 
 static MainWindow *self = NULL;
 
-#define MAX_MISSED_HEARTBEAT 3
-
-
-THREAD_API remote_heartbeat_thread(void *param)
-{
-    MainWindow *remote = (MainWindow *)param;
-
-    int idle = 300;
-    int count = 1;
-    while(true)
-    {
-        Sleep(10);
-        THREAD_WAITEXIT();
-
-        bool connected = remote->isConnected();
-        if(!connected)
-        {
-            break;  //外部断开连接
-        }
-
-        //1.快速发送心跳count次，确认连接，间隔1秒
-        if(count)
-        {
-            count--;
-
-            APP_LOG("[RemotePC]fast heartbeat: %d\n", count);
-            remote->heartbeat();
-
-            if(!count)
-            {
-                remote->updateSendTime();
-            }
-
-            int fast_interval = 1000;
-            Sleep(fast_interval);
-            continue;
-        }
-        //4.检测心跳发送三次无回应
-        {
-            bool send_error = remote->isSendFail();
-            if(send_error)
-            {
-                remote->tryBreakConnection();
-                break;
-            }
-        }
-        //3.定时发送心跳
-        {
-            bool outOfTime = remote->isSendTime();
-            if(outOfTime)
-            {
-                remote->heartbeat();
-                remote->updateSendTime();
-            }
-        }
-        Sleep(idle);
-    }//while
-    APP_LOG("[RemotePC]heartbeat thread exit\n");
-    return NULL;
-}
-
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     BaseObject(),
     ITcpServer(),
-    ITcpClient(),
+//    ITcpClient(),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     connect(this, SIGNAL(log(QString)), this, SLOT(writeLog(QString)), Qt::QueuedConnection);
 
-    mSendTime = 0;
-    mHeartbeatCount = 0;
-    mSendInterval = 0;
-    mConnectCount = 0;
 
     mServer = new TcpServer();
     mServer->setHandler(this);
 
-    mClient = new TcpClient();
-    mClient->setHandler(this);
+    mClient = NULL;
+
 }
 
 MainWindow::~MainWindow()
 {
+    if(NULL!=mClient)
+    {
+        delete mClient;
+        mClient = NULL;
+    }
     mServer->close();
-    mClient->close();
-
-    delete mClient;
     delete mServer;
 
     delete ui;
@@ -115,208 +51,39 @@ MainWindow *MainWindow::getSingletone()
     return self;
 }
 
-void MainWindow::addNewClient(char *ip, int port, SOCKET_HANDLE fd)
+void MainWindow::addNewClient(void *tcp)
 {
-    enter();
-    printf("[TcpServer]add client 1 \n");
-    TcpClient *client = new TcpClient();
-    printf("[TcpServer]add client 2 \n");
-    client->setIp(ip);
-    printf("[TcpServer]add client 3 \n");
-    client->setPort(port);
-    printf("[TcpServer]add client 4 \n");
-    client->setHandler(this);
-    printf("[TcpServer]add client 6 \n");
-    client->setFd(fd);
-    printf("[TcpServer]add client 7 \n");
-    client->start(false);
-    printf("[TcpServer]add client 8 \n");
-    leave();
+//    enter();
+//    ITcpClient **handler = (ITcpClient **)(tcp);
+//    *handler = this;
+//    leave();
 }
 
 void MainWindow::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
-    enter();
-
-    APP_LOG("receive:\n%s\n", buffer_format(buffer, size));
-    HeartbeatProtocol protocol;
-    Heartbeat *hb = protocol.find(buffer, size);
-    if(hb!=NULL)
-    {
-        delete hb;
-        TcpClient *client = (TcpClient *)tcp;
-        if(client!=mClient)
-        {
-            char *p = NULL;
-            int size = 0;
-            bool isSlave = false;
-            double timePoint;
-            GET_TIME(timePoint);
-            Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
-            if(NULL!=t)
-            {
-                if(t->makeBuffer(&p, size))
-                {
-                    client->send(p, size);
-                    delete p;
-                }
-            }
-        }
-        else
-        {
-            clearHeartbeatCount();
-        }
-    }
-    leave();
 
 }
 
 void MainWindow::tcpClientConnected(void *tcp)
 {
-    TcpClient *client = (TcpClient *)tcp;
-    enter();
-    if(client!=mClient)
-    {
-        delete client;
-    }
-    else
-    {
-        clearConnectCount();
-        enableHeartbeat();
-    }
-    leave();
+//    TcpClient *client = (TcpClient *)tcp;
+//    enter();
+
+//    delete client;
+//    leave();
 }
 
 void MainWindow::tcpClientDisconnected(void *tcp)
 {
-    TcpClient *client = (TcpClient *)tcp;
-    enter();
-    if(client==mClient)
-    {
-        delete client;
-    }
-    else
-    {
-        disableHeartbeat();
-    }
-    leave();
+//    TcpClient *client = (TcpClient *)tcp;
+//    enter();
+//    leave();
+//    delete client;
 }
 
 void MainWindow::tcpClientError(void *tcp)
 {
 
-}
-
-bool MainWindow::isConnected()
-{
-    bool result = false;
-    enter();
-    result = mClient->isConnected();
-    leave();
-    return result;
-}
-
-void MainWindow::heartbeat()
-{
-    enter();
-
-    mHeartbeatCount++;
-    char *p = NULL;
-    int size = 0;
-    HeartbeatProtocol protocol;
-    bool isSlave = false;
-    double timePoint;
-    GET_TIME(timePoint);
-    Heartbeat *hb = protocol.makeHeartbeat(isSlave, timePoint);
-    if(NULL!=hb)
-    {
-        if(hb->makeBuffer(&p, size))
-        {
-            mClient->send(p, size);
-            delete p;
-        }
-    }
-
-    leave();
-}
-
-void MainWindow::updateSendTime()
-{
-    enter();
-    GET_TIME(mSendTime);
-    APP_LOG("[RemotePC]update send time:%d\n", mSendTime);
-    leave();
-}
-
-bool MainWindow::isSendFail()
-{
-    bool result = true;
-
-    enter();
-    APP_LOG("[RemotePC]is send fail:%d\n", mHeartbeatCount);
-    result = (MAX_MISSED_HEARTBEAT<=mHeartbeatCount);
-    leave();
-
-    return result;
-}
-
-void MainWindow::tryBreakConnection()
-{
-    enter();
-    mClient->tryBreakConnection();
-    leave();
-}
-
-bool MainWindow::isSendTime()
-{
-    bool result = false;
-
-    enter();
-    if(0!=mSendTime)
-    {
-        int now;
-        GET_TIME(now);
-
-        result = (now>=(mSendTime+mSendInterval));
-    }
-    leave();
-
-    return result;
-}
-
-void MainWindow::clearConnectCount()
-{
-    enter();
-    mConnectCount = 0;
-    leave();
-}
-
-void MainWindow::clearHeartbeatCount()
-{
-    enter();
-    mHeartbeatCount = 0;
-    leave();
-}
-
-void MainWindow::enableHeartbeat()
-{
-    enter();
-    mHeartbeatCount = 0;
-    mSendTime = 0;
-    int ret;
-    THREAD_CREATE(&mHeartbeatThread, remote_heartbeat_thread, this, ret);
-    if(ret)
-    {
-        THREAD_RUN(mHeartbeatThread, false);
-    }
-    leave();
-}
-
-void MainWindow::disableHeartbeat()
-{
-    enter();
-    THREAD_CLOSE(mHeartbeatThread);
-    leave();
 }
 
 void MainWindow::writeLog(const QString &text)
@@ -338,21 +105,42 @@ void MainWindow::writeLog(const QString &text)
 
 void MainWindow::on_pushButton_clicked()
 {
+    enter();
     mServer->setPort(ui->spinBox->value());
     mServer->start();
+    leave();
 }
 
 void MainWindow::on_radioButton_2_clicked()
 {
+    enter();
     mClient->setEnableReconnect(ui->radioButton->isChecked());
+    leave();
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    QString ip = ui->lineEdit->text();
-    QByteArray ba = ip.toLocal8Bit();
-    char *p = ba.data();
-    mClient->setIp(p);
-    mClient->setPort(ui->spinBox_2->value());
-    mClient->start(true);
+    enter();
+    if(NULL==mClient)
+    {
+        mClient = new RemotePC();
+        QString ip = ui->lineEdit->text();
+        QByteArray ba = ip.toLocal8Bit();
+        char *p = ba.data();
+        mClient->setIp(p);
+        mClient->setPort(ui->spinBox_2->value());
+        mClient->start();
+    }
+    leave();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    enter();
+    if(NULL!=mClient)
+    {
+        delete mClient;
+        mClient = NULL;
+    }
+    leave();
 }
