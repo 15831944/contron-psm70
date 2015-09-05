@@ -18,7 +18,7 @@ THREAD_API remote_heartbeat_thread(void *param)
     while(true)
     {
         Sleep(10);
-        THREAD_WAITEXIT();
+//        THREAD_WAITEXIT();
 
         if(remote->isExiting())
         {

@@ -1,17 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jkserver", "D:/tmp/psm_groundserver/src/StationClient\jkserver.vcxproj", "{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{AD02E590-92CA-328B-9478-3607D093F64A} = {AD02E590-92CA-328B-9478-3607D093F64A}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MasterSwitcher", "D:/tmp/contron-psm70/src/MasterSwitcher/src\MasterSwitcher.vcxproj", "{284AA849-0083-39ED-BCFD-2FA275A23216}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StationLibrary", "D:/tmp/psm_groundserver/src/StationLibrary\StationLibrary.vcxproj", "{AD02E590-92CA-328B-9478-3607D093F64A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StationClientDemo", "D:/tmp/psm_groundserver/src/StationClientDemo\StationClientDemo.vcxproj", "{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}"
-	ProjectSection(ProjectDependencies) = postProject
-		{AD02E590-92CA-328B-9478-3607D093F64A} = {AD02E590-92CA-328B-9478-3607D093F64A}
-		{AD02E590-92CA-328B-9478-3607D093F64A} = {AD02E590-92CA-328B-9478-3607D093F64A}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TcpTester", "D:/tmp/contron-psm70/src/TcpTester\TcpTester.vcxproj", "{3B08E921-2E5C-3DD3-A90D-976899047CDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,18 +10,14 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Debug|Win32.Build.0 = Debug|Win32
-		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Release|Win32.ActiveCfg = Release|Win32
-		{04942F75-5A99-3B7A-AD7B-904E3BD8B4E0}.Release|Win32.Build.0 = Release|Win32
-		{AD02E590-92CA-328B-9478-3607D093F64A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AD02E590-92CA-328B-9478-3607D093F64A}.Debug|Win32.Build.0 = Debug|Win32
-		{AD02E590-92CA-328B-9478-3607D093F64A}.Release|Win32.ActiveCfg = Release|Win32
-		{AD02E590-92CA-328B-9478-3607D093F64A}.Release|Win32.Build.0 = Release|Win32
-		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Debug|Win32.Build.0 = Debug|Win32
-		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Release|Win32.ActiveCfg = Release|Win32
-		{7B8E8B1A-5954-31F6-B226-7AE49ACE0C60}.Release|Win32.Build.0 = Release|Win32
+		{284AA849-0083-39ED-BCFD-2FA275A23216}.Debug|Win32.ActiveCfg = Debug|Win32
+		{284AA849-0083-39ED-BCFD-2FA275A23216}.Debug|Win32.Build.0 = Debug|Win32
+		{284AA849-0083-39ED-BCFD-2FA275A23216}.Release|Win32.ActiveCfg = Release|Win32
+		{284AA849-0083-39ED-BCFD-2FA275A23216}.Release|Win32.Build.0 = Release|Win32
+		{3B08E921-2E5C-3DD3-A90D-976899047CDC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3B08E921-2E5C-3DD3-A90D-976899047CDC}.Debug|Win32.Build.0 = Debug|Win32
+		{3B08E921-2E5C-3DD3-A90D-976899047CDC}.Release|Win32.ActiveCfg = Release|Win32
+		{3B08E921-2E5C-3DD3-A90D-976899047CDC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

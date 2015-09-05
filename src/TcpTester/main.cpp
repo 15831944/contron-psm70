@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMetaMethod>
 #include "log.h"
+#include "tcp.h"
 
 #if QT5
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -50,6 +51,7 @@ void myMessageOutput(QtMsgType type, const char *msg)
 
 int main(int argc, char *argv[])
 {
+	tcp_init();
 #if QT5
     qInstallMessageHandler(myMessageOutput);
 #else

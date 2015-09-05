@@ -113,7 +113,7 @@ typedef HANDLE pthread_t;
     { \
         DWORD exit_code; \
         pthread_t thread_handle = GetCurrentThread(); \
-        int ret = GetExitCodeThread(thread_handle, exit_code); \
+        int ret = GetExitCodeThread(thread_handle, &exit_code); \
         if(0==ret) break; \
         if((0!=ret) && (STILL_ACTIVE==exit_code)) break; \
     }

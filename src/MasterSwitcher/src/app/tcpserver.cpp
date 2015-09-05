@@ -14,7 +14,7 @@ THREAD_API tcpserver_receive_thread(void *param)
     while(true)
     {
         Sleep(10);
-        THREAD_WAITEXIT();
+//        THREAD_WAITEXIT();
 
         if(server->isExiting())
         {
@@ -31,6 +31,8 @@ THREAD_API tcpserver_receive_thread(void *param)
         Sleep(10);
 
     }//true
+
+	DEBUG_OUTPUT("tcp server receive thread exit...\n");
 
     return NULL;
 }
@@ -78,8 +80,6 @@ TcpServer::TcpServer()
 
 TcpServer::~TcpServer()
 {
-    THREAD_CLOSE(guard_thread);
-    THREAD_CLOSE(receive_thread);
 }
 
 void TcpServer::setPort(int port)
@@ -121,6 +121,12 @@ void TcpServer::close()
     leave();
 
     Sleep(200);
+
+
+    enter();
+    THREAD_CLOSE(guard_thread);
+    THREAD_CLOSE(receive_thread);
+    leave();
 }
 
 bool TcpServer::checkStarted()
