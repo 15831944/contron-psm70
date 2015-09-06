@@ -244,7 +244,7 @@ void TcpServer::deleteCloseClient()
             mClients.erase(t);
         }
     }
-    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
+//    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
 
     leave();
 }

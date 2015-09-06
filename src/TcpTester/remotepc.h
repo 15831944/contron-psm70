@@ -5,6 +5,15 @@
 #include "itcpclient.h"
 #include "tcpclient.h"
 
+/**
+ * @brief The RemotePC class
+ * @note
+ * 对方机实现功能:
+ * 主动发起心跳连接,通过心跳报文发发送本机状态;
+ * 分析心跳报文,本机和对方机均为备机时,本机的启动时间小于对方机的启动时间可将本机设置为主机;
+ * 重连计数,重连错误则将本机设置为主机;
+ */
+
 class RemotePC: public BaseObject, public ITcpClient
 {
 public:

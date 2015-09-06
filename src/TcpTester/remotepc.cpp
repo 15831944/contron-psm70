@@ -4,7 +4,13 @@
 #include "heartbeatprotocol.h"
 #include "heartbeat.h"
 
+#if QT
 #include "log.h"
+#define DEBUG_OUTPUT APP_LOG
+#else
+#define DEBUG_OUTPUT printf
+#endif
+
 
 #define MAX_MISSED_HEARTBEAT 3
 
@@ -36,7 +42,7 @@ THREAD_API remote_heartbeat_thread(void *param)
         {
             count--;
 
-            APP_LOG("[HEARTBEAT]fast heartbeat: %d\n", count);
+            DEBUG_OUTPUT("[HEARTBEAT]fast heartbeat: %d\n", count);
             remote->heartbeat();
 
             if(!count)
@@ -68,7 +74,7 @@ THREAD_API remote_heartbeat_thread(void *param)
         }
         Sleep(idle);
     }//while
-    APP_LOG("[RemotePC]heartbeat thread exit\n");
+    DEBUG_OUTPUT("[RemotePC]heartbeat thread exit\n");
     return NULL;
 }
 
@@ -134,7 +140,7 @@ void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
     enter();
 
-    APP_LOG("receive:\t%s\n", buffer_format(buffer, size));
+    DEBUG_OUTPUT("receive:\t%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
     if(hb!=NULL)
@@ -236,7 +242,7 @@ void RemotePC::updateSendTime()
 {
     enter();
     GET_TIME(mSendTime);
-    APP_LOG("[HEARTBEAT]update send time:%d\n", mSendTime);
+    DEBUG_OUTPUT("[HEARTBEAT]update send time:%d\n", mSendTime);
     leave();
 }
 
@@ -248,7 +254,7 @@ bool RemotePC::isSendFail()
     result = (MAX_MISSED_HEARTBEAT<=mHeartbeatCount);
     if(result)
     {
-        APP_LOG("[HEARTBEAT]is send fail:%d\n", mHeartbeatCount);
+        DEBUG_OUTPUT("[HEARTBEAT]is send fail:%d\n", mHeartbeatCount);
     }
     leave();
 
@@ -275,7 +281,7 @@ bool RemotePC::isSendTime()
         result = (now>=(mSendTime+mSendInterval));
         if(result)
         {
-            APP_LOG("[HEARTBEAT]is send time:mSendTime=%d mSendInterval=%d now=%d\n", mSendTime, mSendInterval, now);
+            DEBUG_OUTPUT("[HEARTBEAT]is send time:mSendTime=%d mSendInterval=%d now=%d\n", mSendTime, mSendInterval, now);
         }
     }
     leave();
@@ -341,7 +347,7 @@ void RemotePC::handleConnectCount()
     leave();
     if(connectError)
     {
-        APP_LOG("[RemotePC]connect fail\n");
+        DEBUG_OUTPUT("[RemotePC]connect fail\n");
 //        if(NULL!=mHandler)
 //        {
 //            mHandler->canBeMaster();

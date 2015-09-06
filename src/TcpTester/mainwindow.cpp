@@ -12,8 +12,8 @@ static MainWindow *self = NULL;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     BaseObject(),
-    ITcpServer(),
-    ITcpClient(),
+//    ITcpServer(),
+//    ITcpClient(),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(log(QString)), this, SLOT(writeLog(QString)), Qt::QueuedConnection);
 
 
-    mServer = new TcpServer();
-    mServer->setHandler(this);
+    mServer = new LocalPC();
+//    mServer->setHandler(this);
 
     mClient = NULL;
 
@@ -35,7 +35,7 @@ MainWindow::~MainWindow()
         delete mClient;
         mClient = NULL;
     }
-    mServer->close();
+//    mServer->close();
     delete mServer;
 
     delete ui;
@@ -54,8 +54,8 @@ MainWindow *MainWindow::getSingletone()
 void MainWindow::addNewClient(void *tcp)
 {
     enter();
-    ITcpClient **handler = (ITcpClient **)(tcp);
-    *handler = this;
+//    ITcpClient **handler = (ITcpClient **)(tcp);
+//    *handler = this;
     leave();
 }
 

@@ -9,8 +9,8 @@ public:
     ITcpServer();
     ~ITcpServer();
 
-    virtual void addNewClient(void *tcp)=0;
-
+    virtual void addNewClient(void *tcp);
+    virtual void tcpServerReceiveData(void *tcp, char *buffer, int size)=0;
 };
 
 #endif // ITCPSERVER_H
