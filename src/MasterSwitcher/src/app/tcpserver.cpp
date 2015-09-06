@@ -242,6 +242,7 @@ void TcpServer::deleteCloseClient()
         if(found)
         {
             mClients.erase(t);
+            delete client;
         }
     }
 //    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
@@ -251,6 +252,7 @@ void TcpServer::deleteCloseClient()
 
 void TcpServer::addNewConnection(void *tcp)
 {
+    enter();
     DEBUG_OUTPUT("[TcpServer]add client 1 \n");
     if(NULL!=mHandler)
     {
@@ -262,7 +264,12 @@ void TcpServer::addNewConnection(void *tcp)
 
 void TcpServer::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
-
+    enter();
+    if(NULL!=mHandler)
+    {
+        mHandler->tcpServerReceiveData(tcp, buffer, size);
+    }
+    leave();
 }
 
 void TcpServer::tcpClientConnected(void *tcp)
@@ -274,7 +281,7 @@ void TcpServer::tcpClientDisconnected(void *tcp)
     enter();
     TcpClient *client = (TcpClient *)tcp;
     client->close();
-    delete client;
+//    delete client;
     leave();
 
 }
