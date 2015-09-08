@@ -115,7 +115,7 @@ typedef HANDLE pthread_t;
         pthread_t thread_handle = GetCurrentThread(); \
         int ret = GetExitCodeThread(thread_handle, &exit_code); \
         if(0==ret) break; \
-        if((0!=ret) && (STILL_ACTIVE==exit_code)) break; \
+        if((0!=ret) && (STILL_ACTIVE!=exit_code)) break; \
     }
 #define THREAD_CLOSE(handle) \
 	TerminateThread(handle, 0); \

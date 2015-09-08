@@ -20,6 +20,7 @@ THREAD_API tcpclient_guard_thread(void *param)
 
         if(tcp->isExiting())
         {
+            DEBUG_OUTPUT("[TCP CLIENT]tcp exiting in guard thread exit\n");
             break;
         }
 
@@ -43,6 +44,7 @@ THREAD_API tcpclient_guard_thread(void *param)
         }
         Sleep(idle);
     }
+    DEBUG_OUTPUT("[TCP CLIENT]guard thread exit\n");
     return NULL;
 }
 
@@ -57,6 +59,7 @@ THREAD_API tcpclient_receive_thread(void *param)
 
         if(tcp->isExiting())
         {
+            DEBUG_OUTPUT("[TCP CLIENT]tcp exiting in receive thread exit\n");
             break;
         }
 
@@ -67,7 +70,10 @@ THREAD_API tcpclient_receive_thread(void *param)
             continue;
         }
         tcp->receive();
+        THREAD_WAITEXIT();
     }//true
+    DEBUG_OUTPUT("[TCP CLIENT]receive thread exit");
+
 
     return NULL;
 }
@@ -133,6 +139,11 @@ void TcpClient::receive()
     fd_set fds;
     FD_ZERO(&fds);
 
+#define MAXTCPSIZE 1024
+    char buffer[MAXTCPSIZE] = {0};
+    int len = 0;
+    bool received = false;
+
     enter();
 
     SOCKET_HANDLE fd = mTcp.fd;
@@ -146,28 +157,29 @@ void TcpClient::receive()
     int ret = select(fd+1, &fds, NULL, NULL, &tv);
     if(0<ret)
     {
-        bool received = FD_ISSET(fd, &fds);
+        received = FD_ISSET(fd, &fds);
         if(received)
         {
-#define MAXTCPSIZE 1024
-            char buffer[MAXTCPSIZE] = {0};
-            int len = 0;
             len = recv(fd, buffer, sizeof(buffer), 0);
-            if(0<len)
-            {
-                // handle data here.
-                handleData(buffer, len);
-            }
-            else
-            {
-                // connection broken.
-                tryBreakConnection();
-            }
-#undef MAXTCPSIZE
         }//receive
     }
 
     leave();
+
+    if(received)
+    {
+        if(0<len)
+        {
+            // handle data here.
+            handleData(buffer, len);
+        }
+        else
+        {
+            // connection broken.
+            tryBreakConnection();
+        }
+    }
+#undef MAXTCPSIZE
 }
 
 int TcpClient::send(char *buffer, int size)
@@ -192,15 +204,15 @@ int TcpClient::connect()
     int ret = 0;
 
     enter();
-    DEBUG_OUTPUT("[TcpClient]connect 1\n");
+//    DEBUG_OUTPUT("[TcpClient]connect 1\n");
     tcp_connect(&mTcp);
-    DEBUG_OUTPUT("[TcpClient]connect 2\n");
+//    DEBUG_OUTPUT("[TcpClient]connect 2\n");
     ret = tcp_isvalid(&mTcp);
     DEBUG_OUTPUT("connect %s:%d %s \n", mTcp.hostname, mTcp.port, ret?"success":"fail");
     leave();
     if(NULL!=mHandler)
     {
-        DEBUG_OUTPUT("[TcpClient]connect 3\n");
+//        DEBUG_OUTPUT("[TcpClient]connect 3\n");
         if(ret)
         {
             mHandler->tcpClientConnected(this);

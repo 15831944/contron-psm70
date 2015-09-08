@@ -14,10 +14,11 @@ THREAD_API tcpserver_receive_thread(void *param)
     while(true)
     {
         Sleep(10);
-//        THREAD_WAITEXIT();
+        THREAD_WAITEXIT();
 
         if(server->isExiting())
         {
+            DEBUG_OUTPUT("tcp server exiting in receive thread...\n");
             break;
         }
 
@@ -29,6 +30,7 @@ THREAD_API tcpserver_receive_thread(void *param)
 
         server->waitForNewConnection();
         Sleep(10);
+        THREAD_WAITEXIT();
 
     }//true
 
@@ -46,7 +48,8 @@ THREAD_API tcpserver_guard_thread(void *param)
         THREAD_WAITEXIT();
 
         server->deleteCloseClient();
-        Sleep(500);
+        Sleep(100);
+        THREAD_WAITEXIT();
 
     }//true
 
@@ -274,6 +277,7 @@ void TcpServer::tcpClientReceiveData(void *tcp, char *buffer, int size)
 
 void TcpServer::tcpClientConnected(void *tcp)
 {
+    UN_USE(tcp);
 }
 
 void TcpServer::tcpClientDisconnected(void *tcp)
@@ -288,6 +292,6 @@ void TcpServer::tcpClientDisconnected(void *tcp)
 
 void TcpServer::tcpClientError(void *tcp)
 {
-
+    UN_USE(tcp);
 }
 

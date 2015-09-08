@@ -6,6 +6,7 @@
 #include "heartbeat.h"
 
 #include "log.h"
+#include <QClipboard>
 
 static MainWindow *self = NULL;
 
@@ -53,6 +54,7 @@ MainWindow *MainWindow::getSingletone()
 
 void MainWindow::addNewClient(void *tcp)
 {
+    UN_USE(tcp);
     enter();
 //    ITcpClient **handler = (ITcpClient **)(tcp);
 //    *handler = this;
@@ -162,5 +164,21 @@ void MainWindow::on_pushButton_3_clicked()
         delete mClient;
         mClient = NULL;
     }
+    leave();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    enter();
+    ui->textEdit->clear();
+    leave();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    enter();
+    QClipboard *clipboard = QApplication::clipboard();
+    QString newText = ui->textEdit->toPlainText();
+    clipboard->setText(newText);
     leave();
 }

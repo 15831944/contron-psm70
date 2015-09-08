@@ -24,7 +24,7 @@ THREAD_API remote_heartbeat_thread(void *param)
     while(true)
     {
         Sleep(10);
-//        THREAD_WAITEXIT();
+        THREAD_WAITEXIT();
 
         if(remote->isExiting())
         {
@@ -138,38 +138,27 @@ void RemotePC::setEnableReconnect(bool enable)
 
 void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
+
+    bool found = false;
     enter();
 
-    DEBUG_OUTPUT("receive:\t%s\n", buffer_format(buffer, size));
+    DEBUG_OUTPUT("[RemotePC]receive:\t%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
     if(hb!=NULL)
     {
         delete hb;
-        TcpClient *client = (TcpClient *)tcp;
-        if(client!=mClient)
+        if(tcp==mClient)
         {
-            char *p = NULL;
-            int size = 0;
-            bool isSlave = false;
-            double timePoint;
-            GET_TIME(timePoint);
-            Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
-            if(NULL!=t)
-            {
-                if(t->makeBuffer(&p, size))
-                {
-                    client->send(p, size);
-                    delete p;
-                }
-            }
-        }
-        else
-        {
-            clearHeartbeatCount();
+            found = true;
         }
     }
     leave();
+    if(found)
+    {
+        DEBUG_OUTPUT("[RemotePC]clear heartbeat\n");
+        clearHeartbeatCount();
+    }
 }
 
 void RemotePC::tcpClientConnected(void *tcp)

@@ -13,7 +13,6 @@
  * 监听心跳端口,接收对方机心跳,并向对方机回应本机状态;
  * 添加浮动IP;
  * 删除浮动IP;
- * 检测浮动IP是否在线,不在线时本机下线并删除浮动IP
  */
 
 class LocalPC : public BaseObject, ITcpServer
