@@ -2,6 +2,26 @@
 
 #include "log.h"
 
+#if WIN32
+#define MASTER_SCRIPT "../scripts/onmaster.bat"
+#define MASTER_COMMAND \
+    "call "MASTER_SCRIPT
+#else
+#define MASTER_SCRIPT "../scripts/onmaster.sh"
+#define MASTER_COMMAND \
+    ". "MASTER_SCRIPT
+#endif
+
+#if WIN32
+#define SLAVE_SCRIPT "../scripts/onslave.bat"
+#define SLAVE_COMMAND \
+    "call "SLAVE_SCRIPT
+#else
+#define SLAVE_SCRIPT "../scripts/onslave.sh"
+#define SLAVE_COMMAND \
+    ". "SLAVE_SCRIPT
+#endif
+
 SwitchServer::SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote)
     : IGateway()
     , IRemotePC()
@@ -18,9 +38,10 @@ int SwitchServer::start()
 {
     mGateway->setStateChange(this);
     mRemote->setHandler(this);
+    mLocal->setHandler(this);
 
-//    mLocal->start();
-//    mGateway->start();
+    mLocal->start();
+    mGateway->start();
     mRemote->start();
 
     while(true)
@@ -35,6 +56,7 @@ void SwitchServer::gatewayStateChanged()
 {
     if(GATEWAY_OFFLINE==mGateway->getState())
     {
+        mRemote->tryBreakConnection();
         mLocal->makeSlave();
     }
 }
@@ -46,6 +68,50 @@ void SwitchServer::canBeMaster()
     {
         APP_LOG("[SERVER]remote is slave \n");
         mLocal->makeMaster();
+    }
+}
+
+void SwitchServer::onLocalIsMaster()
+{
+    char buffer[128];
+    char command[128];
+    memset(command, 0, sizeof(command));
+    sprintf(command, MASTER_COMMAND);
+    FILE *f;
+    if((f = popen(command, "r")) == NULL)
+        return;
+    while(fgets(buffer, 128, f))
+    {
+        printf(buffer);
+    }
+
+    pclose(f);
+    int ret = strcasecmp(buffer, "success");
+    if(1==ret)
+    {
+        return;
+    }
+}
+
+void SwitchServer::onLocalIsSlave()
+{
+    char buffer[128];
+    char command[128];
+    memset(command, 0, sizeof(command));
+    sprintf(command, SLAVE_COMMAND);
+    FILE *f;
+    if((f = popen(command, "r")) == NULL)
+        return;
+    while(fgets(buffer, 128, f))
+    {
+        printf(buffer);
+    }
+
+    pclose(f);
+    int ret = strcasecmp(buffer, "success");
+    if(1==ret)
+    {
+        return;
     }
 }
 
@@ -78,10 +144,10 @@ LocalState SwitchServer::adjudge(Gateway *gateway, RemotePC *remote)
     {
         if(!remote->isConnected())
         {
-            if(!remote->execPing())
-            {
-                return LOCAL_MASTER;
-            }
+//            if(!remote->execPing())
+//            {
+//                return LOCAL_MASTER;
+//            }
         }
         else
         {

@@ -7,8 +7,9 @@
 #include "igateway.h"
 #include "localstate.h"
 #include "iremotepc.h"
+#include "ilocalpc.h"
 
-class SwitchServer :public IGateway, public IRemotePC
+class SwitchServer :public IGateway, public IRemotePC, public ILocalPC
 {
 public:
     SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote);
@@ -21,6 +22,10 @@ public:
 
     //IRemotePC
     void canBeMaster();
+
+    //ILocalPC
+    void onLocalIsMaster();
+    void onLocalIsSlave();
 
 protected:
     void switchMaster();

@@ -1,7 +1,7 @@
 #include "tcpserver.h"
 
-#if QT
 #include "log.h"
+#if QT
 #define DEBUG_OUTPUT APP_LOG
 #else
 #define DEBUG_OUTPUT printf

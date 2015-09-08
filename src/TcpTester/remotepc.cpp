@@ -87,6 +87,7 @@ RemotePC::RemotePC()
     mSendInterval = 3;
     mConnectCount = 0;
     mExiting = false;
+    mMaxConnect = 1;
 
     mClient = new TcpClient();
     mClient->setHandler(this);
@@ -136,10 +137,26 @@ void RemotePC::setEnableReconnect(bool enable)
     leave();
 }
 
+void RemotePC::setLocal(LocalPC *local)
+{
+    enter();
+    mLocal = local;
+    leave();
+}
+
+void RemotePC::setMaxConnect(int maxConnect)
+{
+    enter();
+    mMaxConnect = maxConnect;
+    leave();
+}
+
 void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
 
     bool found = false;
+    bool isSlave = false;
+    double timePoint = 0.0;
     enter();
 
     DEBUG_OUTPUT("[RemotePC]receive:\t%s\n", buffer_format(buffer, size));
@@ -147,17 +164,20 @@ void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
     Heartbeat *hb = protocol.find(buffer, size);
     if(hb!=NULL)
     {
-        delete hb;
         if(tcp==mClient)
         {
             found = true;
+            isSlave = hb->getIsSlave();
+            timePoint = hb->getTimePoint();
         }
+        delete hb;
     }
     leave();
     if(found)
     {
         DEBUG_OUTPUT("[RemotePC]clear heartbeat\n");
         clearHeartbeatCount();
+        checkRemote(isSlave, timePoint);
     }
 }
 
@@ -205,15 +225,15 @@ bool RemotePC::isConnected()
 
 void RemotePC::heartbeat()
 {
+    bool isSlave = getIsSlave();
+    double timePoint = getTimePoint();
+
     enter();
 
     mHeartbeatCount++;
     char *p = NULL;
     int size = 0;
     HeartbeatProtocol protocol;
-    bool isSlave = false;
-    double timePoint;
-    GET_TIME(timePoint);
     Heartbeat *hb = protocol.makeHeartbeat(isSlave, timePoint);
     if(NULL!=hb)
     {
@@ -295,6 +315,7 @@ void RemotePC::clearHeartbeatCount()
 void RemotePC::enableHeartbeat()
 {
     enter();
+    mTimePoint = 0.0;
     mHeartbeatCount = 0;
     mSendTime = 0;
     int ret;
@@ -326,7 +347,7 @@ void RemotePC::handleConnectCount()
 {
     bool connectError = false;
     enter();
-    int maxConnect = 3;
+    int maxConnect = mMaxConnect;
     mConnectCount++;
     if(maxConnect<=mConnectCount)
     {
@@ -342,4 +363,66 @@ void RemotePC::handleConnectCount()
 //            mHandler->canBeMaster();
 //        }
     }
+}
+
+bool RemotePC::getIsSlave()
+{
+    bool result = false;
+
+    enter();
+    result = mLocal->isSlave();
+    leave();
+
+    return result;
+}
+
+double RemotePC::getTimePoint()
+{
+    double result;
+    GET_TIME(result);
+
+    enter();
+    result = mLocal->getSetupTime();
+    leave();
+
+    return result;
+}
+
+void RemotePC::checkRemote(bool isSlave, double timePoint)
+{
+    bool timePointChanged = false;
+    enter();
+    {
+        if(0!=compareTimePoint(mTimePoint, timePoint))
+        {
+            mTimePoint = timePoint;
+            timePointChanged = true;
+        }
+    }
+    leave();
+    if(!timePointChanged)
+    {
+        return;
+    }
+
+    bool localIsSlave = getIsSlave();
+    if(!isSlave || localIsSlave != isSlave)
+    {
+        return;
+    }
+
+    double localTimePoint = getTimePoint();
+    if(0<=compareTimePoint(localTimePoint, timePoint))
+    {
+        return;
+    }
+}
+
+int RemotePC::compareTimePoint(double timePoint1, double timePoint2)
+{
+    DOUBLE_CONVERTER source, target;
+    source.d = timePoint1;
+    target.d = timePoint2;
+    int result = memcmp(source.bytes, target.bytes, sizeof(double));
+    return result;
 }

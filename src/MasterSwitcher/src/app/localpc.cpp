@@ -1,45 +1,92 @@
 #include "localpc.h"
 
-#include "ping.h"
-#include "ipconfig.h"
-
-#include "sys/platform.h"
-#include "log.h"
-
 #include "heartbeatprotocol.h"
 #include "heartbeat.h"
-#include "utils.h"
 
-#if WIN32
-#define SWITCH_SCRIPT "../scripts/onmaster.bat"
-#define SWITCH_COMMAND \
-    "call "SWITCH_SCRIPT
+#include "sys/platform.h"
+#include "utils.h"
+#include "ipconfig.h"
+#include "ping.h"
+
+#include "log.h"
+#if QT
+#define DEBUG_OUTPUT APP_LOG
 #else
-#define SWITCH_SCRIPT "../scripts/onmaster.sh"
-#define SWITCH_COMMAND \
-    ". "SWITCH_SCRIPT
+#define DEBUG_OUTPUT printf
 #endif
 
 LocalPC::LocalPC()
-    :BaseObject()
+    : BaseObject()
     , ITcpServer()
-    , ITcpClient()
 {
     mState = LOCAL_SLAVE;
-    mEthernet = "bond0";
-    mFloatIP = "10.7.5.27";
-    mFloatGateway = "10.7.5.254";
-    mFloatNetmask = "255.255.255.0";
-
-    GET_TIME(mSetupTime);
 
     mTcpServer = new TcpServer();
     mTcpServer->setHandler(this);
 }
-
 LocalPC::~LocalPC()
 {
+    enter();
+    mTcpServer->close();
+    leave();
+
     delete mTcpServer;
+}
+
+void LocalPC::setPort(int port)
+{
+    enter();
+    mTcpServer->setPort(port);
+    leave();
+}
+
+LocalState LocalPC::getState()
+{
+    LocalState result = LOCAL_SLAVE;
+
+    enter();
+    result = mState;
+    leave();
+
+    return result;
+}
+
+void LocalPC::setState(LocalState state)
+{
+    bool changed = false;
+    enter();
+    if(state != mState)
+    {
+        mState = state;
+        changed = true;
+        if(LOCAL_SLAVE == mState)
+        {
+            GET_TIME(mSetupTime);
+        }
+    }
+    leave();
+    if(changed)
+    {
+        stateChanged();
+    }
+}
+
+double LocalPC::getSetupTime()
+{
+    double result;
+
+    enter();
+    result = mSetupTime;
+    leave();
+
+    return result;
+}
+
+void LocalPC::setSetupTime(double time)
+{
+    enter();
+    mSetupTime = time;
+    leave();
 }
 
 void LocalPC::setFloatIP(char *floatIP)
@@ -74,30 +121,26 @@ void LocalPC::setEthernet(char *ethernet)
     leave();
 }
 
-void LocalPC::setPort(int port)
+void LocalPC::setHandler(ILocalPC *handler)
 {
     enter();
-    mPort = port;
-    printf("[LOCAL]heartbeat port:%d\n", mPort);
+    mHandler = handler;
     leave();
 }
 
-void LocalPC::start()
+int LocalPC::start()
 {
+    int result = NUMBER_FALSE;
+
     enter();
-
-    if(hasFloatIP()&&floatGatewayOnline())
-    {
-        mState = LOCAL_MASTER;
-    }
-
-    mTcpServer->setPort(mPort);
-    mTcpServer->start();
+    result = mTcpServer->start();
     leave();
+
+    return result;
 }
 
 void LocalPC::makeMaster()
-{    
+{
     enter();
 
     APP_LOG("[LOCAL]try make MASTER\n");
@@ -129,13 +172,9 @@ void LocalPC::makeMaster()
         APP_LOG("[LOCAL]add ip ok\n");
         printf("[LOCAL]add ip ok\n");
         setState(LOCAL_MASTER);
-
-
-        APP_LOG("[LOCAL]exec script\n");
-        printf("[LOCAL]exec script\n");
-        execScript();
     }
     leave();
+
 }
 
 void LocalPC::makeSlave()
@@ -151,52 +190,17 @@ void LocalPC::makeSlave()
     }
 }
 
-LocalState LocalPC::getState()
+bool LocalPC::isSlave()
 {
-    LocalState result = LOCAL_SLAVE;
-
+    bool result = false;
     enter();
-    result = mState;
+    result = (LOCAL_SLAVE==mState);
     leave();
-
     return result;
 }
 
-void LocalPC::setState(LocalState state)
+void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
 {
-    enter();
-    if(state != mState)
-    {
-        mState = state;
-        if(LOCAL_SLAVE == mState)
-        {
-            GET_TIME(mSetupTime);
-        }
-    }
-    leave();
-}
-
-double LocalPC::getSetupTime()
-{
-    double result;
-
-    enter();
-    result = mSetupTime;
-    leave();
-
-    return result;
-}
-
-void LocalPC::addNewClient(void *tcp)
-{
-    enter();
-    TcpClient *client = (TcpClient *)tcp;
-    client->setHandler(this);
-    leave();
-}
-
-void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
-{    
     enter();
 
     printf("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
@@ -208,8 +212,9 @@ void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 
         char *p = NULL;
         int size = 0;
-        bool isSlave = (getState()==LOCAL_SLAVE);
-        double timePoint = getSetupTime();
+        bool isSlave = false;
+        double timePoint;
+        GET_TIME(timePoint);
         Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
         if(NULL!=t)
         {
@@ -225,55 +230,65 @@ void LocalPC::tcpClientReceiveData(void *tcp, char *buffer, int size)
     leave();
 }
 
-void LocalPC::tcpClientConnected(void *tcp)
-{
-    UN_USE(tcp);
-}
-
-void LocalPC::tcpClientDisconnected(void *tcp)
-{
-    TcpClient *client = (TcpClient *)tcp;
-    delete client;
-}
-
 bool LocalPC::floatIPOnline()
 {
     Ping ping;
     return ping.exec(mFloatIP, 3);
 }
 
-bool LocalPC::floatGatewayOnline()
+
+void LocalPC::stateChanged()
 {
-    Ping ping;
-    return ping.exec(mFloatIP, 3);
+    bool slave = isSlave();
+
+    if(slave)
+    {
+        updateSetupTime();
+        emitOnSlave();
+    }
+    else
+    {
+        emitOnMaster();
+    }
 }
 
-bool LocalPC::hasFloatIP()
+void LocalPC::updateSetupTime()
 {
-    Ipconfig ipconfig;
-    return ipconfig.hasIP(mFloatIP);
+    enter();
+    GET_TIME(mSetupTime);
+    leave();
 }
 
-bool LocalPC::execScript()
+void LocalPC::emitOnSlave()
 {
-    char buffer[128];
-    char command[128];
-    memset(command, 0, sizeof(command));
-    sprintf(command, SWITCH_COMMAND);
-    FILE *f;
-    if((f = popen(command, "r")) == NULL)
-        return false;
-    while(fgets(buffer, 128, f))
+    bool hasHandler = false;
+    enter();
+    hasHandler = (NULL!=mHandler);
+    leave();
+
+    if(!hasHandler)
     {
-        printf(buffer);
+        return;
+    }
+    enter();
+    mHandler->onLocalIsSlave();
+    leave();
+}
+
+void LocalPC::emitOnMaster()
+{
+    bool hasHandler = false;
+    enter();
+    hasHandler = (NULL!=mHandler);
+    leave();
+
+    if(!hasHandler)
+    {
+        return;
     }
 
-    pclose(f);
-    int ret = strcasecmp(buffer, "success");
-    if(1==ret)
-    {
-        return true;
-    }
-    return false;
+    enter();
+    mHandler->onLocalIsMaster();
+    leave();
 }
 

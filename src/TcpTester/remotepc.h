@@ -4,6 +4,7 @@
 #include "baseobject.h"
 #include "itcpclient.h"
 #include "tcpclient.h"
+#include "localpc.h"
 
 /**
  * @brief The RemotePC class
@@ -25,6 +26,8 @@ public:
     void setIp(char *ip);
     void setPort(int port);
     void setEnableReconnect(bool enable);
+    void setLocal(LocalPC *local);
+    void setMaxConnect(int maxConnect);
 
 public:
     void tcpClientReceiveData(void *tcp, char *buffer, int size);
@@ -46,6 +49,12 @@ public:
     bool isExiting();
     void handleConnectCount();
 
+protected:
+    bool getIsSlave();
+    double getTimePoint();
+    void checkRemote(bool isSlave, double timePoint);
+    int compareTimePoint(double timePoint1, double timePoint2);
+
 private:
     TcpClient *mClient;
 
@@ -56,6 +65,10 @@ private:
     int mConnectCount;
     pthread_t mHeartbeatThread;
     bool mExiting;
+    double mTimePoint;
+    int mMaxConnect;
+
+    LocalPC *mLocal;
 };
 
 #endif // REMOTEPC_H

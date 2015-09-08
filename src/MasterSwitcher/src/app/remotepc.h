@@ -2,87 +2,77 @@
 #define REMOTEPC_H
 
 #include "baseobject.h"
-#include "localstate.h"
-#include "localpc.h"
-#include "ionlinechecker.h"
-#include "onlinechecker.h"
-#include "tcpclient.h"
 #include "itcpclient.h"
+#include "tcpclient.h"
+#include "localpc.h"
 #include "iremotepc.h"
 
-class RemotePC : public BaseObject
-        , public IOnlineChecker
-        , public ITcpClient
+/**
+ * @brief The RemotePC class
+ * @note
+ * 对方机实现功能:
+ * 主动发起心跳连接,通过心跳报文发发送本机状态;
+ * 分析心跳报文,本机和对方机均为备机时,本机的启动时间小于对方机的启动时间可将本机设置为主机;
+ * 重连计数,重连错误则将本机设置为主机;
+ */
+
+class RemotePC: public BaseObject, public ITcpClient
 {
 public:
     RemotePC();
     ~RemotePC();
 
+public:
+    void start();
+    void setIp(char *ip);
+    void setPort(int port);
+    void setEnableReconnect(bool enable);
     void setLocalPC(LocalPC *local);
-    LocalPC *getLocalPC();
-
+    void setMaxConnect(int maxConnect);
+    void setReconnectInterval(int interval);
     void setHandler(IRemotePC *handler);
 
-    void setIp(const char *ip);
-    void setPort(int port);
-    void setReconnectInterval(int interval);
-
-    double getTimePoint();
-    void setTimePoint(double timePoint);
-
-    bool getIsSlave();
-    void setIsSlave(bool isSlave);
-
-    void start();
-
-    bool isConnected();
-    void tryBreakConnection();
-    void heartbeat();
-    bool isSendFail();
-    bool isSendTime();
-    void updateSendTime();
-    void clearHeartbeatCount();
-
 public:
+    void tcpClientReceiveData(void *tcp, char *buffer, int size);
     void tcpClientConnected(void *tcp);
     void tcpClientDisconnected(void *tcp);
-    void tcpClientReceiveData(void *tcp, char *buffer, int size);
     void tcpClientError(void *tcp);
 
 public:
-    bool execPing();
-    void online();
-    void offline();
-    void checkOnline();
-
-protected:
-    void stateChanged();
-    void enableHeartbeat();
-    void disenableHeartbeat();
-    void timePointChanged();
+    bool isConnected();
+    void heartbeat();
+    void updateSendTime();
+    bool isSendFail();
+    void tryBreakConnection();
+    bool isSendTime();
     void clearConnectCount();
+    void clearHeartbeatCount();
+    void enableHeartbeat();
+    void disableHeartbeat();
+    bool isExiting();
     void handleConnectCount();
 
+protected:
+    bool getIsSlave();
+    double getTimePoint();
+    void checkRemote(bool isSlave, double timePoint);
+    int compareTimePoint(double timePoint1, double timePoint2);
+    bool hasHandler();
+
 private:
-    LocalPC *mLocal;
-    char *mIp;
-    int mPort;
-    int mReconnectInterval;
-    int mConnectCount;
+    TcpClient *mClient;
 
-    pthread_t mHeartbeatThread[1];
-
-    OnlineChecker *mOnlineChecker;
-
-    bool mOnline;
-    TcpClient *tcp;
-    int mHeartbeatCount;
+    //for heartbeat
     int mSendTime;
+    int mHeartbeatCount;
     int mSendInterval;
-
-    bool mIsSlave;
+    int mConnectCount;
+    pthread_t mHeartbeatThread;
+    bool mExiting;
     double mTimePoint;
+    int mMaxConnect;
 
+    LocalPC *mLocal;
     IRemotePC *mHandler;
 };
 

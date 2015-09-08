@@ -24,7 +24,8 @@ HEADERS += \
     $$PWD/heartbeat.h \
     $$PWD/heartbeatprotocol.h \
     $$PWD/tcpserver.h \
-    $$PWD/itcpserver.h
+    $$PWD/itcpserver.h \
+    $$PWD/ilocalpc.h
 
 SOURCES += \
     $$PWD/log.cpp \
@@ -46,5 +47,6 @@ SOURCES += \
     $$PWD/heartbeat.cpp \
     $$PWD/heartbeatprotocol.cpp \
     $$PWD/tcpserver.cpp \
-    $$PWD/itcpserver.cpp
+    $$PWD/itcpserver.cpp \
+    $$PWD/ilocalpc.cpp
 

@@ -2,55 +2,69 @@
 #define LOCALPC_H
 
 #include "baseobject.h"
-#include "localstate.h"
 #include "itcpserver.h"
-#include "itcpclient.h"
 #include "tcpserver.h"
+#include "tcpclient.h"
+#include "localstate.h"
+#include "ilocalpc.h"
 
-class LocalPC : public BaseObject, public ITcpServer, public ITcpClient
+/**
+ * @brief The LocalPC class
+ * @note
+ * 本机实现如下功能:
+ * 监听心跳端口,接收对方机心跳,并向对方机回应本机状态;
+ * 设置为主机;
+ * 设置为备机;
+ */
+
+class LocalPC : public BaseObject, ITcpServer
 {
 public:
     LocalPC();
     ~LocalPC();
 
+public:
+    void setPort(int port);
+    LocalState getState();
+    void setState(LocalState state);
+    double getSetupTime();
+    void setSetupTime(double time);
+
     void setFloatIP(char *floatIP);
     void setFloatGateway(char *gateway);
     void setFloatNetmask(char *netmask);
     void setEthernet(char *ethernet);
-    void setPort(int port);
 
-    void start();
+    void setHandler(ILocalPC *handler);
 
+public:
+    int start();
     void makeMaster();
     void makeSlave();
+    bool isSlave();
 
-    LocalState getState();
-    void setState(LocalState state);
-
-    double getSetupTime();
 public:
-    void addNewClient(void *tcp);
-    void tcpClientReceiveData(void *tcp, char *buffer, int size);
-    void tcpClientConnected(void *tcp);
-    void tcpClientDisconnected(void *tcp);
+    void tcpServerReceiveData(void *tcp, char *buffer, int size);
 
 protected:
     bool floatIPOnline();
-    bool floatGatewayOnline();
-    bool hasFloatIP();
-    bool execScript();
+    void stateChanged();
+    void updateSetupTime();
+    void emitOnSlave();
+    void emitOnMaster();
 
 private:
+    TcpServer *mTcpServer;
+
     LocalState mState;
+    double mSetupTime;
 
     char *mFloatIP;
     char *mFloatGateway;
     char *mFloatNetmask;
     char *mEthernet;
-    double mSetupTime;
-    
-    int mPort;
-    TcpServer *mTcpServer;
+
+    ILocalPC *mHandler;
 
 };
 

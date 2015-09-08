@@ -20,13 +20,15 @@ include(other.pri)
 SOURCES += main.cpp\
         mainwindow.cpp \
     log.cpp \
-    remotepc.cpp \
-    localpc.cpp
+#    remotepc.cpp \
+#    localpc.cpp \
+#    ilocalpc.cpp
 
 HEADERS  += mainwindow.h \
     log.h \
-    remotepc.h \
-    localpc.h
+#    remotepc.h \
+#    localpc.h \
+#    ilocalpc.h
 
 FORMS    += mainwindow.ui
 
