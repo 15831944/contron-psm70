@@ -331,3 +331,13 @@ void tcp_close(tcp_t *tcp)
 #endif
     }
 }
+
+void tcp_zero(tcp_t *tcp)
+{
+    memset(tcp, 0, sizeof(tcp_t));
+#if WIN32
+        tcp->fd = INVALID_SOCKET; return;
+#else
+        tcp->fd = -1; return;
+#endif
+}

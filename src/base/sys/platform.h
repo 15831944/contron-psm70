@@ -16,6 +16,16 @@ typedef unsigned char UCHAR;
 typedef unsigned short USHORT;
 #endif
 
+//UINT
+#ifndef UINT32
+typedef unsigned int UINT32;
+#endif
+
+typedef union {
+    UINT32 i;
+    char bytes[sizeof(UINT32)];
+} UINT32_CONVERTER;
+
 typedef union {
     double d;
     char bytes[sizeof(double)];
@@ -83,6 +93,12 @@ typedef int SOCKET_HANDLE;
 #define Sleep usleep
 
 #endif
+
+typedef union {
+    struct timeval tv;
+    char bytes[sizeof(struct timeval)];
+} TIMEVAL_CONVERTER;
+
 
 /*!
     线程
@@ -225,7 +241,7 @@ typedef HANDLE pthread_t;
 /*!
  * \brief GET_TIME  取当前时间
  * \param now  当前时间
- * 当前时间整形为秒值，小数为毫秒
+ * 当前时间整形为秒值，小数为微秒
  */
 #if WIN32 && !defined(__MINGW32__)
 #define GET_TIME(now) \
@@ -255,6 +271,17 @@ typedef HANDLE pthread_t;
 		now = ( (double) time->tv_sec + (double) time->tv_usec / 1000000 ); \
 	} 
 #endif
+
+#define TIME_TO_STRUCT(now, tv) \
+    { \
+        tv.tv_sec = (long)now; \
+        tv.tv_usec = (long)((now - ((long)now))*1000000); \
+    }
+
+#define STRUCT_TO_TIME(now, tv) \
+    { \
+        now = ( (double) tv.tv_sec + (double) tv.tv_usec / 1000000 ); \
+    }
 
 #define UN_USE(x) (void)x
 

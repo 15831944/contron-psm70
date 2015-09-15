@@ -30,6 +30,7 @@ void tcp_connect(tcp_t *tcp);
 void tcp_close(tcp_t *tcp);
 int tcp_isvalid(tcp_t *tcp);
 int tcp_send(tcp_t *tcp, char *data, int size);
+void tcp_zero(tcp_t *tcp);
 
 #ifdef  __cplusplus
 }
