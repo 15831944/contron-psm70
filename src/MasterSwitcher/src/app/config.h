@@ -13,6 +13,7 @@ typedef struct _config
     int ReconnectInterval;
     char LocalEthernet[NAME_LEN];
     char LocalGateway[IP_LEN];
+    int SyncInterval;
 } config_t;
 
 config_t *loadConfig();

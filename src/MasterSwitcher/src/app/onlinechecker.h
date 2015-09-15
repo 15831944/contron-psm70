@@ -10,13 +10,15 @@ public:
     OnlineChecker();
     ~OnlineChecker();
 
-    void exec();
-    void checkOnline();
-
     void setOnlineChecker(IOnlineChecker *checker);
 
     void setCheckInterval(int interval);
     int getCheckInterval() { return mCheckInterval; }
+
+    void exec();
+
+public:
+    virtual void checkOnline();
 
 private:
     IOnlineChecker *mChecker;

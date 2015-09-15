@@ -124,8 +124,6 @@ android-no-sdk {
         icon.files = $${TARGET}80.png
         icon.path = /usr/share/icons/hicolor/80x80/apps
     } else { # Assumed to be a Desktop Unix
-        OUR_DIR = $$OUT_PWD/../../..
-message(our_dir=$$OUT_DIR)
         copyCommand =
         for(deploymentfolder, DEPLOYMENTFOLDERS) {
             source = $$MAINPROFILEPWD/$$eval($${deploymentfolder}.source)
@@ -133,7 +131,7 @@ message(our_dir=$$OUT_DIR)
             macx {
                 target = $$OUT_PWD/$${TARGET}.app/Contents/Resources/$$eval($${deploymentfolder}.target)
             } else {
-                target = $$OUT_DIR/$$eval($${deploymentfolder}.target)
+                target = $$OUT_PWD/$$eval($${deploymentfolder}.target)
             }
             target = $$replace(target, \\\\, /)
             sourcePathSegments = $$split(source, /)

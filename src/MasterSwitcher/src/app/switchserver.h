@@ -1,6 +1,7 @@
 #ifndef SWITCHSERVER_H
 #define SWITCHSERVER_H
 
+#include "baseobject.h"
 #include "localpc.h"
 #include "remotepc.h"
 #include "gateway.h"
@@ -9,7 +10,7 @@
 #include "iremotepc.h"
 #include "ilocalpc.h"
 
-class SwitchServer :public IGateway, public IRemotePC, public ILocalPC
+class SwitchServer : public BaseObject, public IGateway, public IRemotePC, public ILocalPC
 {
 public:
     SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote);

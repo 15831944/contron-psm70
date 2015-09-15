@@ -6,6 +6,7 @@
 #include "tcpclient.h"
 #include "localpc.h"
 #include "iremotepc.h"
+#include "sync.h"
 
 /**
  * @brief The RemotePC class
@@ -31,8 +32,10 @@ public:
     void setMaxConnect(int maxConnect);
     void setReconnectInterval(int interval);
     void setHandler(IRemotePC *handler);
+    void setSyncInterval(int interval);
 
 public:
+    //ITcpClient
     void tcpClientReceiveData(void *tcp, char *buffer, int size);
     void tcpClientConnected(void *tcp);
     void tcpClientDisconnected(void *tcp);
@@ -52,6 +55,14 @@ public:
     bool isExiting();
     void handleConnectCount();
 
+public:
+    void enableSync();
+    void disableSync();
+
+protected:
+    void checkMaster(bool isSlave);
+    void initSync();
+
 protected:
     bool getIsSlave();
     double getTimePoint();
@@ -69,11 +80,15 @@ private:
     int mConnectCount;
     pthread_t mHeartbeatThread;
     bool mExiting;
-    double mTimePoint;
     int mMaxConnect;
+
+    int mSyncInterval;
+    bool mIsSlave;
+    double mTimePoint;
 
     LocalPC *mLocal;
     IRemotePC *mHandler;
+    Sync *mSync;
 };
 
 #endif // REMOTEPC_H

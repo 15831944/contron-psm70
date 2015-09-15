@@ -23,7 +23,8 @@
 #endif
 
 SwitchServer::SwitchServer(Gateway *gateway, LocalPC *local, RemotePC *remote)
-    : IGateway()
+    : BaseObject()
+    , IGateway()
     , IRemotePC()
     , mLocal(local), mRemote(remote), mGateway(gateway)
 {
@@ -54,25 +55,30 @@ int SwitchServer::start()
 
 void SwitchServer::gatewayStateChanged()
 {
+    enter();
     if(GATEWAY_OFFLINE==mGateway->getState())
     {
-        mRemote->tryBreakConnection();
+        mRemote->disableSync();
         mLocal->makeSlave();
     }
+    leave();
 }
 
 void SwitchServer::canBeMaster()
 {
+    enter();
     mGateway->checkOnline();
     if(GATEWAY_ONLINE==mGateway->getState())
     {
-        APP_LOG("[SERVER]remote is slave \n");
+        APP_LOG("[SwitchServer]remote is slave \n");
         mLocal->makeMaster();
     }
+    leave();
 }
 
 void SwitchServer::onLocalIsMaster()
 {
+    APP_LOG("[SwitchServer]local is master \n");
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));
@@ -95,6 +101,7 @@ void SwitchServer::onLocalIsMaster()
 
 void SwitchServer::onLocalIsSlave()
 {
+    APP_LOG("[SwitchServer]local is slave \n");
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));

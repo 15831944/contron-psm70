@@ -72,7 +72,7 @@ THREAD_API tcpclient_receive_thread(void *param)
         tcp->receive();
         THREAD_WAITEXIT();
     }//true
-    DEBUG_OUTPUT("[TCP CLIENT]receive thread exit");
+    DEBUG_OUTPUT("[TCP CLIENT]receive thread exit\n");
 
 
     return NULL;
@@ -81,7 +81,7 @@ THREAD_API tcpclient_receive_thread(void *param)
 TcpClient::TcpClient()
     :BaseObject()
 {
-    memset(&mTcp, 0, sizeof(tcp_t));
+    tcp_zero(&mTcp);
 
     mStarted = false;
     mExiting = false;

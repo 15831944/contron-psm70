@@ -9,10 +9,12 @@ SUBDIRS += \
 #    IniTest \
 #    StationClientDemo \
     MasterSwitcher \
-    TcpTester
+#    TcpTester \
+#    SwitcherTest
 
 #StationClientDemo.depends = StationLibrary
 #StationClient.depends = StationLibrary
 
 MasterSwitcher.file = MasterSwitcher/src/MasterSwitcher.pro
+SwitcherTest.file = SwitcherTest/src/SwitcherTest.pro
 

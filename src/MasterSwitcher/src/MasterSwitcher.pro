@@ -38,36 +38,53 @@ CONFIG(debug, debug|release) {
 
 #拷贝脚本和配置文件
 ping_bat.source = scripts/ping.bat
-ping_bat.target = scripts
+ping_bat.target = ../../../scripts
 
 ping_sh.source = scripts/ping.sh
-ping_sh.target = scripts
+ping_sh.target = ../../../scripts
 
 ip_bat.source = scripts/ip.bat
-ip_bat.target = scripts
+ip_bat.target = ../../../scripts
 
 ip_sh.source = scripts/ip.sh
-ip_sh.target = scripts
+ip_sh.target = ../../../scripts
 
 onmaster_bat.source = scripts/onmaster.bat
-onmaster_bat.target = scripts
+onmaster_bat.target = ../../../scripts
 
 onmaster_sh.source = scripts/onmaster.sh
-onmaster_sh.target = scripts
+onmaster_sh.target = ../../../scripts
 
 config_ini.source = config.ini
-config_ini.target = ini
+config_ini.target = ../../../ini
 
 DEPLOYMENTFOLDERS += ping_bat ping_sh ip_bat ip_sh onmaster_bat onmaster_sh config_ini
 
 ip_add_bat.source = scripts/ip_add.bat
-ip_add_bat.target = scripts
+ip_add_bat.target = ../../../scripts
 ip_del_bat.source = scripts/ip_del.bat
-ip_del_bat.target = scripts
+ip_del_bat.target = ../../../scripts
 ip_search_bat.source = scripts/ip_search.bat
-ip_search_bat.target = scripts
+ip_search_bat.target = ../../../scripts
 
 DEPLOYMENTFOLDERS += ip_add_bat ip_del_bat ip_search_bat
+
+onslave_bat.source = scripts/onslave.bat
+onslave_bat.target = ../../../scripts
+
+onslave_sh.source = scripts/onslave.sh
+onslave_sh.target = ../../../scripts
+
+DEPLOYMENTFOLDERS += onslave_bat onslave_sh
+
+ip_add_sh.source = scripts/ip_add.sh
+ip_add_sh.target = ../../../scripts
+ip_del_sh.source = scripts/ip_del.sh
+ip_del_sh.target = ../../../scripts
+ip_search_sh.source = scripts/ip_search.sh
+ip_search_sh.target = ../../../scripts
+
+DEPLOYMENTFOLDERS += ip_add_sh ip_del_sh ip_search_sh
 
 include(deployment.pri)
 qtcAddDeployment()

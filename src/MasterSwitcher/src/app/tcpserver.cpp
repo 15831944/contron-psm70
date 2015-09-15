@@ -47,6 +47,18 @@ THREAD_API tcpserver_guard_thread(void *param)
         Sleep(10);
         THREAD_WAITEXIT();
 
+        if(server->isExiting())
+        {
+            DEBUG_OUTPUT("tcp server exiting in receive thread...\n");
+            break;
+        }
+
+        bool isvalid = server->checkStarted();
+        if(!isvalid)
+        {
+            continue;
+        }
+
         server->deleteCloseClient();
         Sleep(100);
         THREAD_WAITEXIT();

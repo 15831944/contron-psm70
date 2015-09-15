@@ -89,6 +89,7 @@ RemotePC::RemotePC()
     mExiting = false;
     mMaxConnect = 1;
     mHandler = NULL;
+    mSync = NULL;
 
     mClient = new TcpClient();
     mClient->setHandler(this);
@@ -166,6 +167,13 @@ void RemotePC::setHandler(IRemotePC *handler)
     leave();
 }
 
+void RemotePC::setSyncInterval(int interval)
+{
+    enter();
+    mSyncInterval = interval;
+    leave();
+}
+
 void RemotePC::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
 
@@ -202,6 +210,7 @@ void RemotePC::tcpClientConnected(void *tcp)
 
     enter();
 
+    initSync();
     clearConnectCount();
     enableHeartbeat();
     leave();
@@ -380,6 +389,67 @@ void RemotePC::handleConnectCount()
     }
 }
 
+void RemotePC::checkMaster(bool isSlave)
+{
+    bool foundMaster = false;
+    bool foundSlave = false;
+    enter();
+    if(isSlave != mIsSlave)
+    {
+        mIsSlave = isSlave;
+        if(!mIsSlave)
+        {
+            foundMaster = true;
+        }
+        else
+        {
+            foundSlave = true;
+        }
+    }
+    leave();
+    if(foundMaster)
+    {
+        enableSync();
+    }
+    if(foundSlave)
+    {
+        disableSync();
+    }
+}
+
+void RemotePC::initSync()
+{
+    enter();
+    mIsSlave = true;
+    leave();
+
+    disableSync();
+}
+
+void RemotePC::enableSync()
+{
+    disableSync();
+
+    enter();
+    mSync = new Sync();
+    mSync->setCheckInterval(mSyncInterval);
+    mSync->enableSync();
+    mSync->exec();
+    leave();
+
+}
+
+void RemotePC::disableSync()
+{
+    enter();
+    if(NULL!=mSync)
+    {
+        mSync->disableSync();
+        delete mSync;
+    }
+    leave();
+}
+
 bool RemotePC::getIsSlave()
 {
     bool result = false;
@@ -405,6 +475,8 @@ double RemotePC::getTimePoint()
 
 void RemotePC::checkRemote(bool isSlave, double timePoint)
 {
+    checkMaster(isSlave);
+
     bool timePointChanged = false;
     enter();
     {

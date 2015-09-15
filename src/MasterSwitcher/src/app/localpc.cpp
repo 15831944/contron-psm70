@@ -93,7 +93,7 @@ void LocalPC::setFloatIP(char *floatIP)
 {
     enter();
     mFloatIP = floatIP;
-    printf("[LOCAL]float ip:%s\n", mFloatIP);
+    DEBUG_OUTPUT("[LocalPC]float ip:%s\n", mFloatIP);
     leave();
 }
 
@@ -101,7 +101,7 @@ void LocalPC::setFloatGateway(char *gateway)
 {
     enter();
     mFloatGateway = gateway;
-    printf("[LOCAL]float gateway:%s\n", mFloatGateway);
+    DEBUG_OUTPUT("[LocalPC]float gateway:%s\n", mFloatGateway);
     leave();
 }
 
@@ -109,7 +109,7 @@ void LocalPC::setFloatNetmask(char *netmask)
 {
     enter();
     mFloatNetmask = netmask;
-    printf("[LOCAL]float netmask:%s\n", mFloatNetmask);
+    DEBUG_OUTPUT("[LocalPC]float netmask:%s\n", mFloatNetmask);
     leave();
 }
 
@@ -117,7 +117,7 @@ void LocalPC::setEthernet(char *ethernet)
 {
     enter();
     mEthernet = ethernet;
-    printf("[LOCAL]ethernet:%s\n", mEthernet);
+    DEBUG_OUTPUT("[LocalPC]ethernet:%s\n", mEthernet);
     leave();
 }
 
@@ -141,51 +141,50 @@ int LocalPC::start()
 
 void LocalPC::makeMaster()
 {
+    bool online = false;
+    DEBUG_OUTPUT("[LocalPC]try make MASTER\n");
     enter();
-
-    APP_LOG("[LOCAL]try make MASTER\n");
-    printf("[LOCAL]try make MASTER\n");
-    if(floatIPOnline())
+    online = floatIPOnline();
+    leave();
+    if(online)
     {
-        APP_LOG("[LOCAL]ip(%s) online\n", mFloatIP);
-        printf("[LOCAL]ip(%s) online\n", mFloatIP);
+        DEBUG_OUTPUT("[LocalPC]ip(%s) online\n", mFloatIP);
         return;
     }
 
-    APP_LOG("[LOCAL]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
-    printf("[LOCAL]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
-    if(LOCAL_MASTER==getState())
+    DEBUG_OUTPUT("[LocalPC]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
+    bool master = !isSlave();
+    if(master)
     {
-        if(!floatIPOnline())
-        {
-            makeSlave();
-        }
+        makeSlave();
         return;
     }
 
-    APP_LOG("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
-    printf("[LOCAL]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
+    enter();
+    DEBUG_OUTPUT("[LocalPC]add ip(%s) to ethernet(%s) ... \n", mFloatIP, mEthernet);
     Ipconfig ipconfig;
     ipconfig.addIP(mEthernet, mFloatIP, mFloatNetmask, mFloatGateway);
-    if(floatIPOnline())
+    online = floatIPOnline();
+    leave();
+    if(online)
     {
-        APP_LOG("[LOCAL]add ip ok\n");
-        printf("[LOCAL]add ip ok\n");
+        DEBUG_OUTPUT("[LocalPC]add ip ok\n");
         setState(LOCAL_MASTER);
     }
-    leave();
-
 }
 
 void LocalPC::makeSlave()
 {
-    APP_LOG("[LOCAL]delete ip(%s) from ethernet(%s) ... \n", mFloatIP, mEthernet);
+    bool found = false;
+    enter();
+    DEBUG_OUTPUT("[LocalPC]delete ip(%s) from ethernet(%s) ... \n", mFloatIP, mEthernet);
     Ipconfig ipconfig;
     ipconfig.delIP(mEthernet, mFloatIP);
-    if(!ipconfig.hasIP(mFloatIP))
+    found = (!ipconfig.hasIP(mFloatIP));
+    leave();
+    if(found)
     {
-        APP_LOG("[LOCAL]delete ip ok\n");
-        printf("[LOCAL]delete ip ok\n");
+        DEBUG_OUTPUT("[LocalPC]delete ip ok\n");
         setState(LOCAL_SLAVE);
     }
 }
@@ -203,7 +202,7 @@ void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
 {
     enter();
 
-    printf("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
+    DEBUG_OUTPUT("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
     if(hb!=NULL)
@@ -261,6 +260,7 @@ void LocalPC::updateSetupTime()
 
 void LocalPC::emitOnSlave()
 {
+    DEBUG_OUTPUT("[LocalPC]emit OnSlave\n");
     bool hasHandler = false;
     enter();
     hasHandler = (NULL!=mHandler);
@@ -277,6 +277,7 @@ void LocalPC::emitOnSlave()
 
 void LocalPC::emitOnMaster()
 {
+    DEBUG_OUTPUT("[LocalPC]emit OnMaster\n");
     bool hasHandler = false;
     enter();
     hasHandler = (NULL!=mHandler);

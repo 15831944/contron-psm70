@@ -68,6 +68,7 @@ config_t *loadConfig()
 
         get_config_number( result, HeartbeatPort );
         get_config_number( result, ReconnectInterval );
+        get_config_number( result, SyncInterval );
     }
 
     fclose(fp);

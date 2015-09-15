@@ -1,22 +1,23 @@
 
 file_name=$(basename "${BASH_SOURCE[0]}")
+dir_name="$(dirname "${BASH_SOURCE[0]}")"
+#echo $dir_name
+file_dir="$( cd "$dir_name" && pwd)"
+echo test--------------------
+echo $file_name
 
 case $1 in
     add)
-        echo add ip
-        ifconfig $3 add $2
-        ifconfig | grep -i "$2" && echo success || echo fail
+      sh "$file_dir/ip_add.sh" $2 $3
         ;;
     del)
-        echo delete ip
-        ifconfig $3 del $2
-        ifconfig | grep -i "$2" && echo fail || echo success
+      sh "$file_dir/ip_del.sh" $2 $3
         ;;
     search)
-        echo search ip
-        ifconfig | grep -i "$2" && echo success || echo fail
+      sh "$file_dir/ip_search.sh" $2
         ;;
     *)
         echo usage
         ;;
 esac
+

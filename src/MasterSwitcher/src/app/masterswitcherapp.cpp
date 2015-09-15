@@ -38,7 +38,9 @@ int MasterSwitcherApp::run()
     mRemote->setLocalPC(mLocal);
     mRemote->setIp(config->RemoteIP);
     mRemote->setPort(config->HeartbeatPort);
+    mRemote->setEnableReconnect(true);
     mRemote->setReconnectInterval(config->ReconnectInterval);
+    mRemote->setSyncInterval(config->SyncInterval);
 
     mGateway->setIp(config->FloatGateway);
 
