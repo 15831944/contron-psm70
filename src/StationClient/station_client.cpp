@@ -56,7 +56,7 @@ THREAD_API stationclient_guard_thread(void *param)
             bool outOfTime = (current >= (timeout));
             if(outOfTime)
             {
-                log("station client reconnect(station=%d, current=%d, disconnect=%d, interval=%d)...\n",
+                jk_log("station client reconnect(station=%d, current=%d, disconnect=%d, interval=%d)...\n",
                     stationno, current, disconnect_time, interval);
                 stationclient_enter(client);
                 stationclient_connect(client);
@@ -116,7 +116,7 @@ THREAD_API stationclient_heartbeat_thread(void *param)
         }
         if(in_server)
         {
-            log("client online...\n");
+            jk_log("client online...\n");
         }
         //1.快速发送三次心跳，确认连接，间隔1秒
         if(count)
@@ -143,7 +143,7 @@ THREAD_API stationclient_heartbeat_thread(void *param)
             stationclient_leave(client);
             if(send_error)
             {
-                log("(station=%d)(%s:%d)heartbeat no response..\n", station_no, ip, port);
+                jk_log("(station=%d)(%s:%d)heartbeat no response..\n", station_no, ip, port);
                 stationclient_enter(client);
                 stationclient_break(client);
                 stationclient_leave(client);
@@ -159,7 +159,7 @@ THREAD_API stationclient_heartbeat_thread(void *param)
             bool outOfTime = (current >= (timeout));
             if(outOfTime)
             {
-                log("(type=%d)(station=%d)heartbeat(last=%d, current=%d)...\n",
+                jk_log("(type=%d)(station=%d)heartbeat(last=%d, current=%d)...\n",
                     in_server, station_no, heartbeat_time, current);
                 stationclient_enter(client);
                 jk_command_heartbeat(client);
@@ -184,7 +184,7 @@ THREAD_API stationclient_heartbeat_thread(void *param)
                 bool outOfTime = (current >= (timeout));
                 if(outOfTime)
                 {
-                    log("(station=%d)(%s:%d)heartbeat timeout, break connection...\n",
+                    jk_log("(station=%d)(%s:%d)heartbeat timeout, break connection...\n",
                         station_no, ip, port);
                     stationclient_enter(client);
                     stationclient_break(client);
@@ -257,7 +257,7 @@ THREAD_API stationclient_receive_thread(void *param)
                 }
                 else
                 {
-                    log("station client disconnect[%s:%d]...\n",
+                    jk_log("station client disconnect[%s:%d]...\n",
                                tcp->hostname, tcp->port);
                     stationclient_break(client);
                 }
@@ -280,7 +280,7 @@ void stationclient_start(stationclient_t *client)
 {
     char *ip = client->conn[0].tcp[0].hostname;
     int port = client->conn[0].tcp[0].port;
-    log("(station=%d)(%s:%d)client start...\n",
+    jk_log("(station=%d)(%s:%d)client start...\n",
         client->station_no, ip, port);
     MUTEX_INIT(&client->guard_critical);
     stationclient_disconnect(client, true);
@@ -358,7 +358,7 @@ void stationclient_connect(stationclient_t *client)
     {
         stationclient_disconnect(client, false);
     }
-    log("station client connect[%s:%d][success=%d]...\n",
+    jk_log("station client connect[%s:%d][success=%d]...\n",
                client->conn[0].tcp[0].hostname,
                client->conn[0].tcp[0].port,
                success);
@@ -406,7 +406,7 @@ void protocol_client_send(stationclient_t *client, char *buffer, int len)
     }
     stationclient_enter(client);
     int ret = tcp_send(tcp, buffer, len);
-    log("(type=%d)station client send[%s:%d][success=%d]%s\n",
+    jk_log("(type=%d)station client send[%s:%d][success=%d]%s\n",
         client->server,
         tcp->hostname,
         tcp->port,
@@ -420,7 +420,7 @@ void stationclient_server(stationclient_t *client)
 {
     char *ip = client->conn[0].tcp[0].hostname;
     int port = client->conn[0].tcp[0].port;
-    log("(station=%d)(%s:%d)client server...\n",
+    jk_log("(station=%d)(%s:%d)client server...\n",
         client->station_no, ip, port);
     MUTEX_INIT(&client->guard_critical);
     bool success = true;
@@ -447,7 +447,7 @@ void stationclient_server(stationclient_t *client)
     {
         stationclient_disconnect(client, false);
     }
-    log("station client server[%s:%d][success=%d]...\n",
+    jk_log("station client server[%s:%d][success=%d]...\n",
                client->conn[0].tcp[0].hostname,
                client->conn[0].tcp[0].port,
                success);
@@ -471,7 +471,7 @@ void stationclient_heartbeat_update(stationclient_t *client, int update_mode, US
         client->heartbeat_time = current;  //收到心跳，更新心跳时间
         if(stationclient_in_server(client))
         {
-            log("(type=%d)server client update...\n", client->server);
+            jk_log("(type=%d)server client update...\n", client->server);
 //            bool online = (0==client->server_no);
             client->server_no = station_no;
 //            if(online)
@@ -493,7 +493,7 @@ void stationclient_heartbeat_update(stationclient_t *client, int update_mode, US
     case 1:
     {
         stationclient_enter(client);
-        log("(type=%d)clear heartbeat count:%d->0\n", client->server, client->heartbeat_count);
+        jk_log("(type=%d)clear heartbeat count:%d->0\n", client->server, client->heartbeat_count);
         client->heartbeat_count = 0;  //收到心跳回应，发送次数清零
         stationclient_leave(client);
     }

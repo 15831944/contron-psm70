@@ -388,7 +388,7 @@ void jk_client_receive(stationclient_t *client, char *buffer, int len)
     sprintf(str, "station client receive[%s:%d]:%s\n",
             tcp->hostname, tcp->port,
             buffer_format(buffer, len));
-    log(str);
+    jk_log(str);
     data_t *frame_list = NULL;
     jk_client_frame_find(&frame_list, buffer, len);
     jk_client_frame_check(client, &frame_list);

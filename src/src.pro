@@ -10,7 +10,7 @@ SUBDIRS += \
 #    StationClientDemo \
     MasterSwitcher \
 #    TcpTester \
-#    SwitcherTest
+    SwitcherTest
 
 #StationClientDemo.depends = StationLibrary
 #StationClient.depends = StationLibrary

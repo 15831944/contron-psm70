@@ -12,7 +12,7 @@ static psm_intf_t self;
 
 void _log(char *text)
 {
-    log(text);
+    jk_log(text);
 }
 
 void psm_intf_init()

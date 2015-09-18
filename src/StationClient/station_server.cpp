@@ -91,7 +91,7 @@ THREAD_API stationserver_receive_thread(void *param)
                 {
                     char *ip = inet_ntoa(in.sin_addr);
                     USHORT port = ntohs(in.sin_port);
-                    log("station client connect from %s:%u ...\n", ip, port);
+                    jk_log("station client connect from %s:%u ...\n", ip, port);
                     stationclient_t *client = stationclient_new();
                     client->server = server;
                     client->station_no = server->station_no;
@@ -132,7 +132,7 @@ void stationserver_connect(stationserver_t *server)
     {
         stationserver_disconnect(server, false);
     }
-    log("station server connect[%s:%d][success=%d]...\n",
+    jk_log("station server connect[%s:%d][success=%d]...\n",
                server->conn[0].tcp[0].hostname,
                server->conn[0].tcp[0].port,
                success);
@@ -165,7 +165,7 @@ THREAD_API stationserver_guard_thread(void *param)
             bool outOfTime = (current >= (timeout));
             if(outOfTime)
             {
-                log("(station=%d)server reconnect(current=%d, disconnect=%d, interval=%d)...\n",
+                jk_log("(station=%d)server reconnect(current=%d, disconnect=%d, interval=%d)...\n",
                     stationno, current, disconnect_time, interval);
                 stationserver_enter(server);
                 stationserver_connect(server);
@@ -181,7 +181,7 @@ void stationserver_start(stationserver_t *server)
 {
     char *ip = server->conn[0].tcp[0].hostname;
     int port = server->conn[0].tcp[0].port;
-    log("(station=%d)(%s:%d)server start...\n",
+    jk_log("(station=%d)(%s:%d)server start...\n",
         server->station_no, ip, port);
     MUTEX_INIT(&server->guard_critical);
     stationserver_disconnect(server, true);
