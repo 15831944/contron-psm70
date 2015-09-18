@@ -51,11 +51,11 @@ void logV(const char *fmt, va_list argp)
 void _log(const char *fmt, ...)
 {
     va_list argp;
-    log_enter();
+//    log_enter();
     va_start(argp, fmt);
     logV(fmt, argp);
     va_end(argp);
-    log_leave();
+//    log_leave();
 }
 
 

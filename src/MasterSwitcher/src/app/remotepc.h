@@ -88,6 +88,7 @@ private:
     LocalPC *mLocal;
     IRemotePC *mHandler;
     Sync *mSync;
+    bool mForceCheckMaster;
 };
 
 #endif // REMOTEPC_H

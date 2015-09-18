@@ -174,7 +174,7 @@ void TcpServer::waitForNewConnection()
     char *ip = NULL;
     USHORT port = 0;
     SOCKET_HANDLE in_fd;
-    enter();
+//    enter();
 
     fd_set fds;
     FD_ZERO(&fds);
@@ -274,7 +274,7 @@ void TcpServer::deleteCloseClient()
             i++;
         }
     }
-//    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
+    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
 
     leave();
 }

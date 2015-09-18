@@ -12,6 +12,7 @@
 THREAD_API tcpclient_guard_thread(void *param)
 {
     TcpClient *tcp = (TcpClient *)param;
+    int test_count = 0;
 //    int idle = 50;
     while(true)
     {
@@ -27,6 +28,11 @@ THREAD_API tcpclient_guard_thread(void *param)
         bool started = tcp->isStarted();
         bool connected = tcp->isConnected();
         bool enableReconnect = tcp->getEnableReconnect();
+        test_count++;
+        if(0==test_count%100)
+        {
+//            DEBUG_OUTPUT("[TCP CLIENT]condition:started=%d\tconnected=%d\tenable=%d\n", started, connected, enableReconnect);
+        }
         if(started&&(!connected)&&enableReconnect)
         {
             int current;
@@ -36,10 +42,12 @@ THREAD_API tcpclient_guard_thread(void *param)
 
             int timeout = brokenTime + interval;
             bool outOfTime = (current >= (timeout));
+//            DEBUG_OUTPUT("[TCP CLIENT]check:brokenTime=%d\tinterval=%d\tnow=%d\n", brokenTime, interval, current);
             if(outOfTime)
             {
                 DEBUG_OUTPUT("[TCP CLIENT]retry:brokenTime=%d\tinterval=%d\tnow=%d\n", brokenTime, interval, current);
                 tcp->connect();
+                DEBUG_OUTPUT("[TCP CLIENT]after try connect\n");
             }
         }
 //        Sleep(idle);
@@ -147,7 +155,7 @@ void TcpClient::receive()
     int len = 0;
     bool received = false;
 
-    enter();
+//    enter();
 
     SOCKET_HANDLE fd = mTcp.fd;
     FD_SET(fd, &fds);
@@ -167,7 +175,7 @@ void TcpClient::receive()
         }//receive
     }
 
-    leave();
+//    leave();
 
     if(received)
     {
@@ -206,16 +214,24 @@ int TcpClient::connect()
 {
     int ret = 0;
 
+        DEBUG_OUTPUT("[TcpClient]try connect\n");
     enter();
-//    DEBUG_OUTPUT("[TcpClient]connect 1\n");
     tcp_connect(&mTcp);
 //    DEBUG_OUTPUT("[TcpClient]connect 2\n");
     ret = tcp_isvalid(&mTcp);
     DEBUG_OUTPUT("connect %s:%d %s \n", mTcp.hostname, mTcp.port, ret?"success":"fail");
-    leave();
-    if(NULL!=mHandler)
+//    leave();
+    if(!ret)
     {
-//        DEBUG_OUTPUT("[TcpClient]connect 3\n");
+        updateBrokenTime();
+    }
+    bool hasHandler = false;
+//    enter();
+    hasHandler = (NULL!=mHandler);
+//    leave();
+    if(hasHandler)
+    {
+        DEBUG_OUTPUT("[TcpClient]handle connect\n");
         if(ret)
         {
             mHandler->tcpClientConnected(this);
@@ -225,10 +241,7 @@ int TcpClient::connect()
             mHandler->tcpClientError(this);
         }
     }
-    if(!ret)
-    {
-        updateBrokenTime();
-    }
+    leave();
 
     return ret;
 }
@@ -330,20 +343,20 @@ void TcpClient::setReconnectInterval(int interval)
 
 void TcpClient::setHandler(ITcpClient *handler)
 {
-    enter();
+//    enter();
     mHandler = handler;
-    leave();
+//    leave();
 }
 
 void TcpClient::start(bool needConnect)
 {
-    enter();
+//    enter();
     mStarted = true;
     if(needConnect)
     {
         connect();
     }
-    leave();
+//    leave();
 }
 
 void TcpClient::close()

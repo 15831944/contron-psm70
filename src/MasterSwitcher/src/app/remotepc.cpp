@@ -134,19 +134,21 @@ void RemotePC::close()
         Sleep(100);
     }
 
+    Sleep(500);
+
 //    THREAD_WAIT(mHeartbeatThread, 500);
-    int timeout = 500;
-    int wait_idle = 10;
-    int count = (timeout + wait_idle)/wait_idle;
-    for(int i=0;i<count;i++)
-    {
-        Sleep(wait_idle);
-        int thread_state;
-        enter();
-        THREAD_ISACTIVE(mHeartbeatThread, thread_state);
-        leave();
-        if(thread_state) break;
-    }
+//    int timeout = 500;
+//    int wait_idle = 10;
+//    int count = (timeout + wait_idle)/wait_idle;
+//    for(int i=0;i<count;i++)
+//    {
+//        Sleep(wait_idle);
+//        int thread_state;
+//        enter();
+//        THREAD_ISACTIVE(mHeartbeatThread, thread_state);
+//        leave();
+//        if(thread_state) break;
+//    }
 }
 
 void RemotePC::setIp(char *ip)
@@ -261,10 +263,19 @@ void RemotePC::tcpClientDisconnected(void *tcp)
 void RemotePC::tcpClientError(void *tcp)
 {    
     UN_USE(tcp);
+    DEBUG_OUTPUT("[RemotePC]tcp error\n");
+    TcpClient *client = (TcpClient *)tcp;
 
-    enter();
-    handleConnectCount();
-    leave();
+//    enter();
+//    if(client==mClient)
+//    {
+//        DEBUG_OUTPUT("[RemotePC]tcp client enable reconnect=%d\n", mClient->getEnableReconnect());
+//        mClient->setEnableReconnect(true);
+    DEBUG_OUTPUT("[RemotePC]begin handle connect count\n");
+        handleConnectCount();
+        DEBUG_OUTPUT("[RemotePC]after handle connect count\n");
+//    }
+//    leave();
 }
 
 bool RemotePC::isConnected()
@@ -392,8 +403,10 @@ void RemotePC::disableHeartbeat()
 
 void RemotePC::handleConnectCount()
 {
+    DEBUG_OUTPUT("[RemotePC]handle connect count\n");
     bool connectError = false;
-    enter();
+//    enter();
+    DEBUG_OUTPUT("[RemotePC]conect error check:max=%d, count=%d\n", mMaxConnect, mConnectCount);
     int maxConnect = mMaxConnect;
     mConnectCount++;
     if(maxConnect<=mConnectCount)
@@ -401,15 +414,14 @@ void RemotePC::handleConnectCount()
         mConnectCount = 0;
         connectError = true;
     }
-    leave();
-    if(connectError && hasHandler())
-    {
-        DEBUG_OUTPUT("[RemotePC]connect fail\n");
-
-        enter();
+//    leave();
+    DEBUG_OUTPUT("[RemotePC]connect error=%d\n", connectError);
+    if(connectError && (NULL!=mHandler))
+    {        
         mHandler->canBeMaster();
-        leave();
+        DEBUG_OUTPUT("[RemotePC]connect fail\n");
     }
+//    leave();
 }
 
 void RemotePC::checkMaster(bool isSlave)
@@ -417,8 +429,12 @@ void RemotePC::checkMaster(bool isSlave)
     bool foundMaster = false;
     bool foundSlave = false;
     enter();
-    if(isSlave != mIsSlave)
+    if(mForceCheckMaster || isSlave != mIsSlave)
     {
+        if(mForceCheckMaster)
+        {
+            mForceCheckMaster = false;
+        }
         mIsSlave = isSlave;
         if(!mIsSlave)
         {
@@ -444,6 +460,7 @@ void RemotePC::initSync()
 {
     enter();
     mIsSlave = true;
+    mForceCheckMaster = true;
     leave();
 
     disableSync();

@@ -166,25 +166,6 @@ typedef HANDLE pthread_t;
         pthread_cancel(handle); \
     }
 
-#define THREAD_ISACTIVE(handle, active) \
-    { \
-        int kill_ret = pthread_kill(handle, 0); \
-        active = (ESRCH==kill_ret); \
-    }
-
-#define THREAD_WAIT(handle, timeout) \
-{ \
-    int wait_idle = 10; \
-    int count = (timeout + wait_idle)/wait_idle; \
-    for(int i=0;i<count;i++) \
-    { \
-        Sleep(wait_idle); \
-        int thread_state; \
-        THREAD_ISACTIVE(handle, thread_state); \
-        if(thread_state) break; \
-    } \
-}
-
 #define THREAD_API void *
 
 #endif

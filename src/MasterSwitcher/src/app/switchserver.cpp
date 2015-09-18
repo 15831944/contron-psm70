@@ -66,14 +66,15 @@ void SwitchServer::gatewayStateChanged()
 
 void SwitchServer::canBeMaster()
 {
-    enter();
+//    enter();
+    APP_LOG("[SwitchServer]can be Master \n");
     mGateway->checkOnline();
     if(GATEWAY_ONLINE==mGateway->getState())
     {
         APP_LOG("[SwitchServer]remote is slave \n");
         mLocal->makeMaster();
     }
-    leave();
+//    leave();
 }
 
 void SwitchServer::onLocalIsMaster()
