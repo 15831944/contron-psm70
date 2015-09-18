@@ -139,7 +139,8 @@ typedef HANDLE pthread_t;
 	handle = NULL;
 
 #else
-
+#include <errno.h>
+#include <signal.h>
 #include <pthread.h>
 #define THREAD_CREATE(handle, func, param, ret) \
     ret = (0 == pthread_create(handle, NULL, func, param));
@@ -159,8 +160,30 @@ typedef HANDLE pthread_t;
  */
 #define THREAD_WAITEXIT(handle) \
     pthread_testcancel();
+
 #define THREAD_CLOSE(handle) \
-    pthread_cancel(handle);
+    { \
+        pthread_cancel(handle); \
+    }
+
+#define THREAD_ISACTIVE(handle, active) \
+    { \
+        int kill_ret = pthread_kill(handle, 0); \
+        active = (ESRCH==kill_ret); \
+    }
+
+#define THREAD_WAIT(handle, timeout) \
+{ \
+    int wait_idle = 10; \
+    int count = (timeout + wait_idle)/wait_idle; \
+    for(int i=0;i<count;i++) \
+    { \
+        Sleep(wait_idle); \
+        int thread_state; \
+        THREAD_ISACTIVE(handle, thread_state); \
+        if(thread_state) break; \
+    } \
+}
 
 #define THREAD_API void *
 

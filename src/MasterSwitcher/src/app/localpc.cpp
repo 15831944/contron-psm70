@@ -20,6 +20,7 @@ LocalPC::LocalPC()
     , ITcpServer()
 {
     mState = LOCAL_SLAVE;
+    updateSetupTime();
 
     mTcpServer = new TcpServer();
     mTcpServer->setHandler(this);
@@ -59,10 +60,6 @@ void LocalPC::setState(LocalState state)
     {
         mState = state;
         changed = true;
-        if(LOCAL_SLAVE == mState)
-        {
-            GET_TIME(mSetupTime);
-        }
     }
     leave();
     if(changed)
@@ -200,8 +197,6 @@ bool LocalPC::isSlave()
 
 void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
 {
-    enter();
-
     DEBUG_OUTPUT("[LocalPC]receive:\n%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
@@ -211,10 +206,9 @@ void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
 
         char *p = NULL;
         int size = 0;
-        bool isSlave = false;
-        double timePoint;
-        GET_TIME(timePoint);
-        Heartbeat *t = protocol.makeHeartbeat(isSlave, timePoint);
+        bool slave = isSlave();
+        double timePoint = getSetupTime();
+        Heartbeat *t = protocol.makeHeartbeat(slave, timePoint);
         if(NULL!=t)
         {
             if(t->makeBuffer(&p, size))
@@ -224,9 +218,7 @@ void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
                 delete p;
             }
         }
-
     }
-    leave();
 }
 
 bool LocalPC::floatIPOnline()

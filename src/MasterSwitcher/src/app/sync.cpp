@@ -13,11 +13,11 @@
 #endif
 
 #if WIN32
-#define SYNC_SCRIPT "../scripts/onsync.bat"
+#define SYNC_SCRIPT "../scripts/sync.bat"
 #define SYNC_COMMAND \
     "call "SYNC_SCRIPT
 #else
-#define SYNC_SCRIPT "../scripts/onsync.sh"
+#define SYNC_SCRIPT "../scripts/sync.sh"
 #define SYNC_COMMAND \
     ". "SYNC_SCRIPT
 #endif
@@ -54,6 +54,8 @@ void Sync::checkOnline()
     {
         return;
     }
+
+    execSyncScript();
 }
 
 void Sync::enableSync()
@@ -61,6 +63,8 @@ void Sync::enableSync()
     enter();
     mEnable = true;
     leave();
+
+    execStartSyncScript();
 }
 
 void Sync::disableSync()
@@ -68,6 +72,8 @@ void Sync::disableSync()
     enter();
     mEnable = false;
     leave();
+
+    execStopSyncScript();
 }
 
 void Sync::execStartSyncScript()

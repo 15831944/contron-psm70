@@ -18,6 +18,9 @@ public:
     void exec();
 
 public:
+    bool isExiting();
+
+public:
     virtual void checkOnline();
 
 private:
@@ -25,6 +28,7 @@ private:
     int mCheckInterval;
 
     pthread_t mThread[1];
+    bool mExiting;
 };
 
 #endif // ONLINECHECKER_H

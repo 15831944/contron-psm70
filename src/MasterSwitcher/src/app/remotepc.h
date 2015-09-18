@@ -25,6 +25,7 @@ public:
 
 public:
     void start();
+    void close();
     void setIp(char *ip);
     void setPort(int port);
     void setEnableReconnect(bool enable);
@@ -52,7 +53,6 @@ public:
     void clearHeartbeatCount();
     void enableHeartbeat();
     void disableHeartbeat();
-    bool isExiting();
     void handleConnectCount();
 
 public:
@@ -79,7 +79,6 @@ private:
     int mSendInterval;
     int mConnectCount;
     pthread_t mHeartbeatThread;
-    bool mExiting;
     int mMaxConnect;
 
     int mSyncInterval;

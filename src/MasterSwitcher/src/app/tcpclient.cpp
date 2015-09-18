@@ -12,7 +12,7 @@
 THREAD_API tcpclient_guard_thread(void *param)
 {
     TcpClient *tcp = (TcpClient *)param;
-    int idle = 500;
+//    int idle = 50;
     while(true)
     {
         Sleep(10);
@@ -42,7 +42,9 @@ THREAD_API tcpclient_guard_thread(void *param)
                 tcp->connect();
             }
         }
-        Sleep(idle);
+//        Sleep(idle);
+        Sleep(10);
+        THREAD_WAITEXIT();
     }
     DEBUG_OUTPUT("[TCP CLIENT]guard thread exit\n");
     return NULL;
@@ -70,6 +72,7 @@ THREAD_API tcpclient_receive_thread(void *param)
             continue;
         }
         tcp->receive();
+        Sleep(10);
         THREAD_WAITEXIT();
     }//true
     DEBUG_OUTPUT("[TCP CLIENT]receive thread exit\n");
@@ -232,6 +235,7 @@ int TcpClient::connect()
 
 void TcpClient::tryBreakConnection()
 {
+    DEBUG_OUTPUT("[TCP CLIENT]tryBreakConnection\n");
     enter();
     tcp_close(&mTcp);
     leave();
@@ -345,19 +349,24 @@ void TcpClient::start(bool needConnect)
 void TcpClient::close()
 {
     enter();
-    mExiting = true;
-    if(tcp_isvalid(&mTcp))
+    if(!mExiting)
     {
-        tcp_close(&mTcp);
+        mExiting = true;
+        tryBreakConnection();
+        Sleep(50);
+//        tcp_close(&mTcp);
+//        updateBrokenTime();
+        //    leave();
+
+//        Sleep(50);
+
+        //    enter();
+        THREAD_CLOSE(guard_thread);
+        THREAD_CLOSE(receive_thread);
     }
     leave();
 
     Sleep(50);
-
-    enter();
-    THREAD_CLOSE(guard_thread);
-    THREAD_CLOSE(receive_thread);
-    leave();
 }
 
 bool TcpClient::isExiting()

@@ -1,0 +1,3 @@
+@echo off
+set my_dir=%~dp0
+echo sync data...

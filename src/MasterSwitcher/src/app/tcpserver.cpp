@@ -42,6 +42,9 @@ THREAD_API tcpserver_receive_thread(void *param)
 THREAD_API tcpserver_guard_thread(void *param)
 {
     TcpServer *server = (TcpServer *)param;
+    int interval = 5;
+    int checkTime;
+    GET_TIME(checkTime);
     while(true)
     {
         Sleep(10);
@@ -59,9 +62,16 @@ THREAD_API tcpserver_guard_thread(void *param)
             continue;
         }
 
-        server->deleteCloseClient();
-        Sleep(100);
-        THREAD_WAITEXIT();
+        int current;
+        GET_TIME(current);
+
+        int timeout = checkTime + interval;
+        bool outOfTime = (current >= (timeout));
+        if(outOfTime)
+        {
+            checkTime = current;
+            server->deleteCloseClient();
+        }
 
     }//true
 
@@ -194,6 +204,8 @@ void TcpServer::waitForNewConnection()
                     ip = inet_ntoa(in.sin_addr);
                     port = ntohs(in.sin_port);
 
+                    DEBUG_OUTPUT("found tcp client:ip=%s, port=%d\n", ip, port);
+
                     found = true;
                 }
             }//receive
@@ -208,6 +220,8 @@ void TcpServer::waitForNewConnection()
         client->setPort(port);
         client->setFd(in_fd);
         client->setEnableReconnect(false);
+
+        DEBUG_OUTPUT("new tcp client:%d\n", (int)client);
 
         client->setHandler(this);
         mClients.push_back(client);
@@ -238,10 +252,8 @@ void TcpServer::deleteCloseClient()
 {
     enter();
     vector<TcpClient *>::iterator i = mClients.begin();
-    vector<TcpClient *>::iterator t;
     while(i!=mClients.end())
     {
-        break;
         if(mExiting)
         {
             break;
@@ -250,14 +262,16 @@ void TcpServer::deleteCloseClient()
         bool found = false;
         if(client->isExiting())
         {
-            t = i;
             found = true;
         }
-        i++;
         if(found)
         {
-            mClients.erase(t);
+            i = mClients.erase(i);
             delete client;
+        }
+        else
+        {
+            i++;
         }
     }
 //    DEBUG_OUTPUT("[TcpServer]client count:%d \n", mClients.size());
@@ -294,11 +308,12 @@ void TcpServer::tcpClientConnected(void *tcp)
 
 void TcpServer::tcpClientDisconnected(void *tcp)
 {
-    enter();
+//    enter();
     TcpClient *client = (TcpClient *)tcp;
     client->close();
+//    DEBUG_OUTPUT("close tcp client:%d=%d\n", (int)client, client->isExiting());
 //    delete client;
-    leave();
+//    leave();
 
 }
 

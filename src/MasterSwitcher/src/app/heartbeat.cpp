@@ -169,11 +169,24 @@ bool Heartbeat::isValid()
 
 bool Heartbeat::getIsSlave()
 {
-    return false;
+    bool result = false;
+    if(isValid())
+    {
+        result = mBuffer[STATE_POS];
+    }
+
+    return result;
 }
 
 double Heartbeat::getTimePoint()
 {
-    return 0.0;
+    double result = 0.0;
+    if(isValid())
+    {
+        DOUBLE_CONVERTER c;
+        memcpy(c.bytes, &mBuffer[TIMEPOINT_POS], sizeof(c.bytes));
+        result = c.d;
+    }
+    return result;
 }
 

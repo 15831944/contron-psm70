@@ -19,14 +19,24 @@ THREAD_API remote_heartbeat_thread(void *param)
 {
     RemotePC *remote = (RemotePC *)param;
 
-    int idle = 300;
+//    int idle = 300;
     int count = 1;
     while(true)
     {
         Sleep(10);
         THREAD_WAITEXIT();
 
-        if(remote->isExiting())
+        bool exited = false;
+//        try
+//        {
+            exited = remote->isExiting();
+//        }
+//        catch(...)
+//        {
+//            break;
+//        }
+
+        if(exited)
         {
             break;
         }
@@ -72,7 +82,8 @@ THREAD_API remote_heartbeat_thread(void *param)
                 remote->updateSendTime();
             }
         }
-        Sleep(idle);
+        Sleep(200);
+        THREAD_WAITEXIT();
     }//while
     DEBUG_OUTPUT("[RemotePC]heartbeat thread exit\n");
     return NULL;
@@ -86,10 +97,11 @@ RemotePC::RemotePC()
     mHeartbeatCount = 0;
     mSendInterval = 3;
     mConnectCount = 0;
-    mExiting = false;
     mMaxConnect = 1;
     mHandler = NULL;
     mSync = NULL;
+
+    setExiting(false);
 
     mClient = new TcpClient();
     mClient->setHandler(this);
@@ -97,13 +109,7 @@ RemotePC::RemotePC()
 
 RemotePC::~RemotePC()
 {
-    enter();
-    mExiting = true;
-    mClient->close();
-    leave();
-
-    Sleep(200);
-
+    disableHeartbeat();
     if(NULL!=mClient)
     {
         delete mClient;
@@ -116,6 +122,31 @@ void RemotePC::start()
     enter();
     mClient->start(true);
     leave();
+}
+
+void RemotePC::close()
+{
+    printf("close \n");
+    if(!isExiting())
+    {
+        setExiting(true);
+        mClient->close();
+        Sleep(100);
+    }
+
+//    THREAD_WAIT(mHeartbeatThread, 500);
+    int timeout = 500;
+    int wait_idle = 10;
+    int count = (timeout + wait_idle)/wait_idle;
+    for(int i=0;i<count;i++)
+    {
+        Sleep(wait_idle);
+        int thread_state;
+        enter();
+        THREAD_ISACTIVE(mHeartbeatThread, thread_state);
+        leave();
+        if(thread_state) break;
+    }
 }
 
 void RemotePC::setIp(char *ip)
@@ -208,21 +239,22 @@ void RemotePC::tcpClientConnected(void *tcp)
 {
     UN_USE(tcp);
 
-    enter();
+//    enter();
 
     initSync();
     clearConnectCount();
     enableHeartbeat();
-    leave();
+//    leave();
 }
 
 void RemotePC::tcpClientDisconnected(void *tcp)
 {
     UN_USE(tcp);
 
-    enter();
+//    enter();
     disableHeartbeat();
-    leave();
+    disableSync();
+//    leave();
 
 }
 
@@ -358,15 +390,6 @@ void RemotePC::disableHeartbeat()
     leave();
 }
 
-bool RemotePC::isExiting()
-{
-    bool result = false;
-    enter();
-    result = mExiting;
-    leave();
-    return result;
-}
-
 void RemotePC::handleConnectCount()
 {
     bool connectError = false;
@@ -446,6 +469,7 @@ void RemotePC::disableSync()
     {
         mSync->disableSync();
         delete mSync;
+        mSync = NULL;
     }
     leave();
 }
