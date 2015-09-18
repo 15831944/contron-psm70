@@ -6,6 +6,8 @@
 
 QT       += core gui
 
+CONFIG += console
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DEFINES += QT
@@ -20,15 +22,9 @@ include(other.pri)
 SOURCES += main.cpp\
         mainwindow.cpp \
     log.cpp \
-#    remotepc.cpp \
-#    localpc.cpp \
-#    ilocalpc.cpp
 
 HEADERS  += mainwindow.h \
     log.h \
-#    remotepc.h \
-#    localpc.h \
-#    ilocalpc.h
 
 FORMS    += mainwindow.ui
 

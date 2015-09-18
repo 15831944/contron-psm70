@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(log(QString)), this, SLOT(writeLog(QString)), Qt::QueuedConnection);
 
 
+    ui->lineEdit->setText("127.0.0.1");
     mServer = new LocalPC();
 //    mServer->setHandler(this);
 
@@ -136,7 +137,10 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_radioButton_2_clicked()
 {
     enter();
-    mClient->setEnableReconnect(ui->radioButton->isChecked());
+    if(NULL!=mClient)
+    {
+        mClient->setEnableReconnect(ui->radioButton->isChecked());
+    }
     leave();
 }
 
@@ -146,11 +150,13 @@ void MainWindow::on_pushButton_2_clicked()
     if(NULL==mClient)
     {
         mClient = new RemotePC();
+        mClient->setLocalPC(this->mServer);
         QString ip = ui->lineEdit->text();
         QByteArray ba = ip.toLocal8Bit();
         char *p = ba.data();
         mClient->setIp(p);
         mClient->setPort(ui->spinBox_2->value());
+        mClient->setEnableReconnect(ui->radioButton->isChecked());
         mClient->start();
     }
     leave();
@@ -161,6 +167,7 @@ void MainWindow::on_pushButton_3_clicked()
     enter();
     if(NULL!=mClient)
     {
+        mClient->close();
         delete mClient;
         mClient = NULL;
     }

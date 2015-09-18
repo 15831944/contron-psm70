@@ -13,7 +13,9 @@ HEADERS += \
     $$PWD/../MasterSwitcher/src/app/localstate.h \
     $$PWD/../MasterSwitcher/src/app/remotepc.h \
     $$PWD/../MasterSwitcher/src/app/localpc.h \
-    $$PWD/../MasterSwitcher/src/app/ilocalpc.h
+    $$PWD/../MasterSwitcher/src/app/ilocalpc.h \
+    $$PWD/../MasterSwitcher/src/app/sync.h \
+    $$PWD/../MasterSwitcher/src/app/onlinechecker.h
 
 SOURCES += \
     $$PWD/../MasterSwitcher/src/app/heartbeat.cpp \
@@ -27,4 +29,6 @@ SOURCES += \
     $$PWD/../MasterSwitcher/src/app/ipconfig.cpp \
     $$PWD/../MasterSwitcher/src/app/remotepc.cpp \
     $$PWD/../MasterSwitcher/src/app/localpc.cpp \
-    $$PWD/../MasterSwitcher/src/app/ilocalpc.cpp
+    $$PWD/../MasterSwitcher/src/app/ilocalpc.cpp \
+    $$PWD/../MasterSwitcher/src/app/sync.cpp \
+    $$PWD/../MasterSwitcher/src/app/onlinechecker.cpp

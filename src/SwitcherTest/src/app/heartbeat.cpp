@@ -88,7 +88,7 @@ void Heartbeat::print()
    printf("now=%s.%ld\n", strTime, tv.tv_usec); //输出精确到微秒
 
 
-    APP_LOG("%s.%ld\t%d\n", strTime, tv.tv_usec, timePoint);
+    APP_LOG("%s.%ld\t\t\t%d\n", strTime, tv.tv_usec, timePoint);
 }
 
 bool Heartbeat::makeFrame(char *buffer, int size)
