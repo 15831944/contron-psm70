@@ -26,7 +26,8 @@ HEADERS += \
     $$PWD/tcpserver.h \
     $$PWD/itcpserver.h \
     $$PWD/ilocalpc.h \
-    $$PWD/sync.h
+    $$PWD/sync.h \
+    $$PWD/imutex.h
 
 SOURCES += \
     $$PWD/log.cpp \
@@ -50,5 +51,6 @@ SOURCES += \
     $$PWD/tcpserver.cpp \
     $$PWD/itcpserver.cpp \
     $$PWD/ilocalpc.cpp \
-    $$PWD/sync.cpp
+    $$PWD/sync.cpp \
+    $$PWD/imutex.cpp
 

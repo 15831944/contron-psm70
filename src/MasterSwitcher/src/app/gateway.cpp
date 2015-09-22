@@ -12,7 +12,7 @@ Gateway::Gateway()
 
     mOnlineChecker = new OnlineChecker();
     mOnlineChecker->setOnlineChecker(this);
-    mOnlineChecker->setCheckInterval(1);
+    mOnlineChecker->setCheckInterval(5);
 }
 
 Gateway::~Gateway()

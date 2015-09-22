@@ -15,7 +15,8 @@ HEADERS += \
     $$PWD/../MasterSwitcher/src/app/localpc.h \
     $$PWD/../MasterSwitcher/src/app/ilocalpc.h \
     $$PWD/../MasterSwitcher/src/app/sync.h \
-    $$PWD/../MasterSwitcher/src/app/onlinechecker.h
+    $$PWD/../MasterSwitcher/src/app/onlinechecker.h \
+    $$PWD/../MasterSwitcher/src/app/imutex.h
 
 SOURCES += \
     $$PWD/../MasterSwitcher/src/app/heartbeat.cpp \
@@ -31,4 +32,5 @@ SOURCES += \
     $$PWD/../MasterSwitcher/src/app/localpc.cpp \
     $$PWD/../MasterSwitcher/src/app/ilocalpc.cpp \
     $$PWD/../MasterSwitcher/src/app/sync.cpp \
-    $$PWD/../MasterSwitcher/src/app/onlinechecker.cpp
+    $$PWD/../MasterSwitcher/src/app/onlinechecker.cpp \
+    $$PWD/../MasterSwitcher/src/app/imutex.cpp

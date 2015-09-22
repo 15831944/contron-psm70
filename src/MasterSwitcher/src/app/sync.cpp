@@ -102,7 +102,7 @@ void Sync::execStartSyncScript()
 
 void Sync::execSyncScript()
 {
-    APP_LOG("[Sync]on sync \n");
+    APP_LOG("[Sync]on sync:begin \n");
     char buffer[128];
     char command[128];
     memset(command, 0, sizeof(command));
@@ -117,6 +117,7 @@ void Sync::execSyncScript()
 
     pclose(f);
     int ret = strcasecmp(buffer, "success");
+    APP_LOG("[Sync]on sync:end \n");
     if(1==ret)
     {
         return;

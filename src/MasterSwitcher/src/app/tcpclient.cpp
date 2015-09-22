@@ -43,7 +43,7 @@ THREAD_API tcpclient_guard_thread(void *param)
             int timeout = brokenTime + interval;
             bool outOfTime = (current >= (timeout));
 //            DEBUG_OUTPUT("[TCP CLIENT]check:brokenTime=%d\tinterval=%d\tnow=%d\n", brokenTime, interval, current);
-            if(outOfTime)
+            if(brokenTime && outOfTime)
             {
                 DEBUG_OUTPUT("[TCP CLIENT]retry:brokenTime=%d\tinterval=%d\tnow=%d\n", brokenTime, interval, current);
                 tcp->connect();
@@ -120,9 +120,9 @@ bool TcpClient::isConnected()
 {
     bool result = false;
 
-    enter();
+//    enter();
     result = tcp_isvalid(&mTcp);
-    leave();
+//    leave();
 
     return result;
 }
@@ -232,6 +232,7 @@ int TcpClient::connect()
     if(hasHandler)
     {
         DEBUG_OUTPUT("[TcpClient]handle connect\n");
+        userLock();
         if(ret)
         {
             mHandler->tcpClientConnected(this);
@@ -240,6 +241,7 @@ int TcpClient::connect()
         {
             mHandler->tcpClientError(this);
         }
+        userLeave();
     }
     leave();
 
@@ -253,20 +255,23 @@ void TcpClient::tryBreakConnection()
     tcp_close(&mTcp);
     leave();
     updateBrokenTime();
+    userLock();
     if(NULL!=mHandler)
     {
         mHandler->tcpClientDisconnected(this);
     }
+    userLeave();
 }
 
 void TcpClient::handleData(char *buffer, int size)
 {
     DEBUG_OUTPUT("[TCP CLIENT]receive:\n%s\n", buffer_format(buffer, size));
+    userLock();
     if(NULL!=mHandler)
     {
         mHandler->tcpClientReceiveData(this, buffer, size);
     }
-
+    userLeave();
 }
 
 int TcpClient::getBrokenTime()
@@ -361,7 +366,7 @@ void TcpClient::start(bool needConnect)
 
 void TcpClient::close()
 {
-    enter();
+//    enter();
     if(!mExiting)
     {
         mExiting = true;
@@ -377,7 +382,7 @@ void TcpClient::close()
         THREAD_CLOSE(guard_thread);
         THREAD_CLOSE(receive_thread);
     }
-    leave();
+//    leave();
 
     Sleep(50);
 }
@@ -385,9 +390,9 @@ void TcpClient::close()
 bool TcpClient::isExiting()
 {
     bool result = false;
-    enter();
+//    enter();
     result = mExiting;
-    leave();
+//    leave();
     return result;
 }
 
@@ -395,9 +400,9 @@ bool TcpClient::isStarted()
 {
     bool result = false;
 
-    enter();
+//    enter();
     result = mStarted;
-    leave();
+//    leave();
 
     return result;
 }

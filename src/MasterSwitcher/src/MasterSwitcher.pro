@@ -6,7 +6,7 @@ CONFIG -= qt
 INCLUDEPATH += $$PWD
 INCLUDEPATH *= $$PWD/..
 
-#DEFINES += QT
+DEFINES += QT
 
 include($$PWD/../../base/common.pri)
 include(app/app.pri)

@@ -64,9 +64,9 @@ void OnlineChecker::exec()
 bool OnlineChecker::isExiting()
 {
     bool result = false;
-    enter();
+//    enter();
     result = mExiting;
-    leave();
+//    leave();
     return result;
 }
 

@@ -3,25 +3,34 @@
 
 #include "sys/platform.h"
 
+#include "imutex.h"
+
 #include <vector>
 using namespace std;
 
-class BaseObject
+class BaseObject : public IMutex
 {
 public:
     BaseObject();
     virtual ~BaseObject();
 
 public:
-    bool isExiting();
-    virtual void setExiting(bool exiting);
-protected:
+    void setUserLock(IMutex *handler);
+    void userLock();
+    void userLeave();
+
+public:
     void enter();
     void leave();
+
+public:
+    bool isExiting();
+    virtual void setExiting(bool exiting);
+
 private:
     CRITICAL_SECTION mCritical;
     bool mExiting;
-    static vector<BaseObject *> gList;
+    IMutex *mUser;
 };
 
 #endif // BASEOBJECT_H

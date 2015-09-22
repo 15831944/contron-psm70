@@ -1,9 +1,11 @@
 #include "baseobject.h"
 
 BaseObject::BaseObject()
+    : IMutex()
 {
     MUTEX_INIT(&mCritical);
     mExiting = false;
+    mUser = NULL;
 }
 
 BaseObject::~BaseObject()
@@ -11,20 +13,41 @@ BaseObject::~BaseObject()
     MUTEX_FREE(&mCritical);
 }
 
+void BaseObject::setUserLock(IMutex *handler)
+{
+    mUser = handler;
+}
+
+void BaseObject::userLock()
+{
+//    if(NULL!=mUser)
+//    {
+//        mUser->enter();
+//    }
+}
+
+void BaseObject::userLeave()
+{
+//    if(NULL!=mUser)
+//    {
+//        mUser->leave();
+//    }
+}
+
 bool BaseObject::isExiting()
 {
     bool result = false;
-    enter();
+//    enter();
     result = mExiting;
-    leave();
+//    leave();
     return result;
 }
 
 void BaseObject::setExiting(bool exiting)
 {
-    enter();
+//    enter();
     mExiting = exiting;
-    leave();
+//    leave();
 }
 
 void BaseObject::enter()

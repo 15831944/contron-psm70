@@ -41,7 +41,10 @@ int SwitchServer::start()
     mRemote->setHandler(this);
     mLocal->setHandler(this);
 
-    mLocal->start();
+    if(!mLocal->start())
+    {
+        return 1;
+    }
     mGateway->start();
     mRemote->start();
 

@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lineEdit->setText("127.0.0.1");
     mServer = new LocalPC();
+    mServer->setUserLock(this);
 //    mServer->setHandler(this);
 
     mClient = NULL;
@@ -157,6 +158,7 @@ void MainWindow::on_pushButton_2_clicked()
         mClient->setIp(p);
         mClient->setPort(ui->spinBox_2->value());
         mClient->setEnableReconnect(ui->radioButton->isChecked());
+        mClient->setUserLock(this);
         mClient->start();
     }
     leave();

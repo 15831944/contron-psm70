@@ -140,6 +140,7 @@ void LocalPC::makeMaster()
 {
     bool online = false;
     DEBUG_OUTPUT("[LocalPC]try make MASTER\n");
+    DEBUG_OUTPUT("[LocalPC]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
     enter();
     online = floatIPOnline();
     leave();
@@ -149,7 +150,6 @@ void LocalPC::makeMaster()
         return;
     }
 
-    DEBUG_OUTPUT("[LocalPC]I'm %s\n", LOCAL_MASTER==getState()?"MASTER":"SLAVE");
     bool master = !isSlave();
     if(master)
     {

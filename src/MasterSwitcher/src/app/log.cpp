@@ -28,6 +28,8 @@ void logV(const char *fmt, va_list argp)
 
     printf("%s\t%s\t%s\n", datestr, timestr, logstr);
 
+    return;
+
     flog = fopen(logfile, "a");
     if(NULL!=flog)
     {

@@ -211,19 +211,21 @@ void TcpServer::waitForNewConnection()
             }//receive
         }//ret
     }
-    leave();
+//    leave();
     if(found)
     {
         DEBUG_OUTPUT("connect from %s:%u ...\n", ip, port);
         TcpClient *client = new TcpClient();
+
+        client->setUserLock(this);
+        client->setHandler(this);
+
         client->setIp(ip);
         client->setPort(port);
         client->setFd(in_fd);
         client->setEnableReconnect(false);
 
         DEBUG_OUTPUT("new tcp client:%d\n", (int)client);
-
-        client->setHandler(this);
         mClients.push_back(client);
 
 //        ITcpClient *handler = NULL;
@@ -267,7 +269,7 @@ void TcpServer::deleteCloseClient()
         if(found)
         {
             i = mClients.erase(i);
-            delete client;
+//            delete client;
         }
         else
         {
@@ -293,12 +295,12 @@ void TcpServer::addNewConnection(void *tcp)
 
 void TcpServer::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
-    enter();
+    userLock();
     if(NULL!=mHandler)
     {
         mHandler->tcpServerReceiveData(tcp, buffer, size);
     }
-    leave();
+    userLeave();
 }
 
 void TcpServer::tcpClientConnected(void *tcp)

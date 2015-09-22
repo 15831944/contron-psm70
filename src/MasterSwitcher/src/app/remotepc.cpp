@@ -104,6 +104,7 @@ RemotePC::RemotePC()
     setExiting(false);
 
     mClient = new TcpClient();
+    mClient->setUserLock(this);
     mClient->setHandler(this);
 }
 
@@ -281,12 +282,12 @@ void RemotePC::tcpClientError(void *tcp)
 bool RemotePC::isConnected()
 {
     bool result = false;
-    enter();
+//    enter();
     if(NULL!=mClient)
     {
         result = mClient->isConnected();
     }
-    leave();
+//    leave();
     return result;
 }
 
@@ -295,7 +296,7 @@ void RemotePC::heartbeat()
     bool isSlave = getIsSlave();
     double timePoint = getTimePoint();
 
-    enter();
+//    enter();
 
     mHeartbeatCount++;
     char *p = NULL;
@@ -311,37 +312,37 @@ void RemotePC::heartbeat()
         }
     }
 
-    leave();
+//    leave();
 }
 
 void RemotePC::updateSendTime()
 {
-    enter();
+//    enter();
     GET_TIME(mSendTime);
     DEBUG_OUTPUT("[HEARTBEAT]update send time:%d\n", mSendTime);
-    leave();
+//    leave();
 }
 
 bool RemotePC::isSendFail()
 {
     bool result = true;
 
-    enter();
+//    enter();
     result = (MAX_MISSED_HEARTBEAT<=mHeartbeatCount);
     if(result)
     {
         DEBUG_OUTPUT("[HEARTBEAT]is send fail:%d\n", mHeartbeatCount);
     }
-    leave();
+//    leave();
 
     return result;
 }
 
 void RemotePC::tryBreakConnection()
 {
-    enter();
+//    enter();
     mClient->tryBreakConnection();
-    leave();
+//    leave();
 }
 
 bool RemotePC::isSendTime()
@@ -367,21 +368,21 @@ bool RemotePC::isSendTime()
 
 void RemotePC::clearConnectCount()
 {
-    enter();
+//    enter();
     mConnectCount = 0;
-    leave();
+//    leave();
 }
 
 void RemotePC::clearHeartbeatCount()
 {
-    enter();
+//    enter();
     mHeartbeatCount = 0;
-    leave();
+//    leave();
 }
 
 void RemotePC::enableHeartbeat()
 {
-    enter();
+//    enter();
     mTimePoint = 0.0;
     mHeartbeatCount = 0;
     mSendTime = 0;
@@ -391,14 +392,14 @@ void RemotePC::enableHeartbeat()
     {
         THREAD_RUN(mHeartbeatThread, false);
     }
-    leave();
+//    leave();
 }
 
 void RemotePC::disableHeartbeat()
 {
-    enter();
+//    enter();
     THREAD_CLOSE(mHeartbeatThread);
-    leave();
+//    leave();
 }
 
 void RemotePC::handleConnectCount()
@@ -417,9 +418,11 @@ void RemotePC::handleConnectCount()
 //    leave();
     DEBUG_OUTPUT("[RemotePC]connect error=%d\n", connectError);
     if(connectError && (NULL!=mHandler))
-    {        
+    {
+        userLock();
         mHandler->canBeMaster();
         DEBUG_OUTPUT("[RemotePC]connect fail\n");
+        userLeave();
     }
 //    leave();
 }
@@ -458,10 +461,10 @@ void RemotePC::checkMaster(bool isSlave)
 
 void RemotePC::initSync()
 {
-    enter();
+//    enter();
     mIsSlave = true;
     mForceCheckMaster = true;
-    leave();
+//    leave();
 
     disableSync();
 }
@@ -470,25 +473,25 @@ void RemotePC::enableSync()
 {
     disableSync();
 
-    enter();
+//    enter();
     mSync = new Sync();
     mSync->setCheckInterval(mSyncInterval);
     mSync->enableSync();
     mSync->exec();
-    leave();
+//    leave();
 
 }
 
 void RemotePC::disableSync()
 {
-    enter();
+//    enter();
     if(NULL!=mSync)
     {
         mSync->disableSync();
         delete mSync;
         mSync = NULL;
     }
-    leave();
+//    leave();
 }
 
 bool RemotePC::getIsSlave()
