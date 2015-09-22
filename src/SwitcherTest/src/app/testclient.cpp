@@ -10,6 +10,8 @@
 #define DEBUG_OUTPUT printf
 #endif
 
+#include "utils.h"
+
 THREAD_API remote_heartbeat_thread(void *param)
 {
     TestClient *remote = (TestClient *)param;
@@ -26,7 +28,8 @@ THREAD_API remote_heartbeat_thread(void *param)
         if(remote->isExiting())
         {
             break;
-        }
+        }        
+
 
         //定时间隔1秒发送
         int timeout = sendTime + 1;
@@ -39,6 +42,8 @@ THREAD_API remote_heartbeat_thread(void *param)
             GET_TIME(sendTime);
             remote->heartbeat(seed);
         }
+
+        remote->testTcpBroken();
 
         Sleep(idle);
     }//while
@@ -149,6 +154,7 @@ void TestClient::heartbeat(UINT32 timePoint)
     }
     enter();
     mClient->send(p, size);
+    mSendCount++;
     leave();
 
     hb->print();
@@ -157,16 +163,42 @@ void TestClient::heartbeat(UINT32 timePoint)
     delete p;
 }
 
+void TestClient::testTcpBroken()
+{
+    enter();
+    if(4<=mSendCount)
+    {
+        mClient->tryBreakConnection();
+    }
+    leave();
+}
+
 void TestClient::tcpClientReceiveData(void *tcp, char *buffer, int size)
 {
     UN_USE(tcp);
-    UN_USE(buffer);
-    UN_USE(size);
+    bool found = false;
+    DEBUG_OUTPUT("[TestClient]receive:\t%s\n", buffer_format(buffer, size));
+    HeartbeatProtocol protocol;
+    Heartbeat *hb = protocol.find(buffer, size);
+    if(hb!=NULL)
+    {
+        found = true;
+        delete hb;
+    }
+    if(found)
+    {
+        enter();
+        mSendCount--;
+        leave();
+    }
 }
 
 void TestClient::tcpClientConnected(void *tcp)
 {
     UN_USE(tcp);
+    enter();
+    mSendCount = 0;
+    leave();
 }
 
 void TestClient::tcpClientDisconnected(void *tcp)

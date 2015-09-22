@@ -20,6 +20,7 @@ public:
     bool isExiting();
     bool isConnected();
     void heartbeat(UINT32 timePoint);
+    void testTcpBroken();
 
 public:
     void tcpClientReceiveData(void *tcp, char *buffer, int size);
@@ -30,6 +31,7 @@ private:
     TcpClient *mClient;
     pthread_t mHeartbeatThread;
     bool mExiting;
+    int mSendCount;
 };
 
 #endif // TESTCLIENT_H
