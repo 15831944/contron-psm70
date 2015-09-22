@@ -45,6 +45,10 @@ int TestServer::start()
 void TestServer::tcpServerReceiveData(void *tcp, char *buffer, int size)
 {
     UN_USE(tcp);
+
+    TcpClient *client = (TcpClient *)tcp;
+    client->send(buffer, size);
+
     DEBUG_OUTPUT("[TestServer]receive:\t%s\n", buffer_format(buffer, size));
     HeartbeatProtocol protocol;
     Heartbeat *hb = protocol.find(buffer, size);
