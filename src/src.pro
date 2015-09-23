@@ -8,9 +8,10 @@ SUBDIRS += \
 #    StationLibrary \
 #    IniTest \
 #    StationClientDemo \
-    MasterSwitcher \
-    TcpTester \
-    SwitcherTest
+#    MasterSwitcher \
+#    TcpTester \
+#    SwitcherTest \
+    statistics
 
 #StationClientDemo.depends = StationLibrary
 #StationClient.depends = StationLibrary
