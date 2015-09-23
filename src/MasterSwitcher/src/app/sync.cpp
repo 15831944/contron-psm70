@@ -65,6 +65,7 @@ void Sync::enableSync()
     leave();
 
     execStartSyncScript();
+    execSyncScript();
 }
 
 void Sync::disableSync()
