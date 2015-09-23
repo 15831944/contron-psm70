@@ -168,6 +168,7 @@ void TestClient::testTcpBroken()
     enter();
     if(4<=mSendCount)
     {
+        mSendCount = 0;
         mClient->tryBreakConnection();
     }
     leave();
