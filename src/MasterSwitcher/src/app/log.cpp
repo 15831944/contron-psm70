@@ -10,12 +10,23 @@ char logbakfile[] = "../log/app.log.1";
 FILE *flog;
 static char logstr[MAXLINESIZE+1];
 
+#if WIN32
+#define LOG_SCRIPT "../scripts/log.bat"
+#define LOG_COMMAND \
+    "call "LOG_SCRIPT" %s \"""%s\""
+#else
+#define LOG_SCRIPT "../scripts/log.sh"
+#define LOG_COMMAND \
+    ". "LOG_SCRIPT" %s \"""%s\""
+#endif
+
 void logV(const char *fmt, va_list argp)
 {
     if(NULL==fmt||0==fmt[0])
     {
         return;
     }
+    memset(logstr, 0, MAXLINESIZE+1);
     vsnprintf(logstr, MAXLINESIZE, fmt, argp);
     struct tm *now;
     struct timeb tb;
@@ -28,24 +39,26 @@ void logV(const char *fmt, va_list argp)
 
     printf("%s\t%s\t%s\n", datestr, timestr, logstr);
 
-    return;
-
+log_enter();
     flog = fopen(logfile, "a");
+    int pos=0;
     if(NULL!=flog)
     {
         fprintf(flog, "%s %s %s", datestr, timestr, logstr);
-        int pos = ftell(flog);
+        pos = ftell(flog);
         fclose(flog);
-        //备份日志文件到.1文件
-        bool backup = (pos>MAXLOGSIZE);
-        if(backup)
+    }
+log_leave();
+
+    //备份日志文件到.1文件
+    bool backup = (pos>MAXLOGSIZE);
+    if(backup)
+    {
+        remove(logbakfile);
+        bool can_rename = (0==rename(logfile, logbakfile));
+        if(can_rename)
         {
-            remove(logbakfile);
-            bool can_rename = (0==rename(logfile, logbakfile));
-            if(can_rename)
-            {
-                remove(logfile);
-            }
+            remove(logfile);
         }
     }
 }

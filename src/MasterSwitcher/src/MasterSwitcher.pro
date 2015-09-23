@@ -115,6 +115,14 @@ tmp_dir.target = $$copy_dir/tmp
 
 DEPLOYMENTFOLDERS += log_dir tmp_dir
 
+log_bat.source = scripts/log.bat
+log_bat.target = $$copy_dir/scripts
+
+log_sh.source = scripts/log.sh
+log_sh.target = $$copy_dir/scripts
+
+DEPLOYMENTFOLDERS += log_bat log_sh
+
 include(deployment.pri)
 qtcAddDeployment()
 
