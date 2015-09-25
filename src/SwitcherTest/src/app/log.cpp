@@ -5,8 +5,8 @@
 #define MAXLINESIZE 10240
 #define MAXLOGSIZE 1024*1024*10  //单个日志文件最大10M
 CRITICAL_SECTION log_critical;
-char logfile[] = "../log/test.log";
-char logbakfile[] = "../log/test.log.1";
+char logfile[] = "../data/test.log";
+char logbakfile[] = "../data/test.log.1";
 FILE *flog;
 static char logstr[MAXLINESIZE+1];
 
@@ -35,17 +35,17 @@ void logV(const char *fmt, va_list argp)
         fprintf(flog, "%s", logstr);
         int pos = ftell(flog);
         fclose(flog);
-        //备份日志文件到.1文件
-        bool backup = (pos>MAXLOGSIZE);
-        if(backup)
-        {
-            remove(logbakfile);
-            bool can_rename = (0==rename(logfile, logbakfile));
-            if(can_rename)
-            {
-                remove(logfile);
-            }
-        }
+//        //备份日志文件到.1文件
+//        bool backup = (pos>MAXLOGSIZE);
+//        if(backup)
+//        {
+//            remove(logbakfile);
+//            bool can_rename = (0==rename(logfile, logbakfile));
+//            if(can_rename)
+//            {
+//                remove(logfile);
+//            }
+//        }
     }
 }
 

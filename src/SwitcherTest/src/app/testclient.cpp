@@ -115,18 +115,14 @@ int TestClient::start()
 bool TestClient::isExiting()
 {
     bool result = false;
-    enter();
     result = mExiting;
-    leave();
     return result;
 }
 
 bool TestClient::isConnected()
 {
     bool result = false;
-    enter();
     result = mClient->isConnected();
-    leave();
     return result;
 }
 
@@ -165,13 +161,11 @@ void TestClient::heartbeat(UINT32 timePoint)
 
 void TestClient::testTcpBroken()
 {
-    enter();
     if(4<=mSendCount)
     {
         mSendCount = 0;
         mClient->tryBreakConnection();
     }
-    leave();
 }
 
 void TestClient::tcpClientReceiveData(void *tcp, char *buffer, int size)
@@ -188,18 +182,14 @@ void TestClient::tcpClientReceiveData(void *tcp, char *buffer, int size)
     }
     if(found)
     {
-        enter();
         mSendCount--;
-        leave();
     }
 }
 
 void TestClient::tcpClientConnected(void *tcp)
 {
     UN_USE(tcp);
-    enter();
     mSendCount = 0;
-    leave();
 }
 
 void TestClient::tcpClientDisconnected(void *tcp)

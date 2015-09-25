@@ -11,7 +11,7 @@ SOURCES += main.cpp
 
 
 !win32 {
-    QMAKE_LFLAGS += -lpthread
+    QMAKE_LFLAGS += -pthread
 }
 
 #输出目录
@@ -37,7 +37,7 @@ config_ini.source = test_config.ini
 config_ini.target = ../../../ini
 
 log_dir.source = readme.txt
-log_dir.target = ../../../log
+log_dir.target = ../../../data
 
 DEPLOYMENTFOLDERS += config_ini log_dir
 
