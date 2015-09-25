@@ -241,6 +241,24 @@ void TcpServer::waitForNewConnection()
 
 }
 
+void TcpServer::closeAllClient()
+{
+    vector<TcpClient *>::iterator i = mClients.begin();
+    while(i!=mClients.end())
+    {
+        if(mExiting)
+        {
+            break;
+        }
+        TcpClient *client = *i;
+        if(!client->isExiting())
+        {
+            client->close();
+        }
+        i++;
+    }
+}
+
 bool TcpServer::isExiting()
 {
     bool result = false;

@@ -92,6 +92,7 @@ THREAD_API remote_heartbeat_thread(void *param)
 RemotePC::RemotePC()
     : BaseObject()
     , ITcpClient()
+    , IGateway()
 {
     mSendTime = 0;
     mHeartbeatCount = 0;
@@ -100,12 +101,18 @@ RemotePC::RemotePC()
     mMaxConnect = 1;
     mHandler = NULL;
     mSync = NULL;
+    mRemoteIp = NULL;
+    mHeartbeatEnable = false;
 
     setExiting(false);
 
     mClient = new TcpClient();
     mClient->setUserLock(this);
     mClient->setHandler(this);
+    mClient->setEnableReconnect(false);
+
+    mIpOnlineChecker = new Gateway();
+    mIpOnlineChecker->setStateChange(this);
 }
 
 RemotePC::~RemotePC()
@@ -121,7 +128,11 @@ RemotePC::~RemotePC()
 void RemotePC::start()
 {
     enter();
-    mClient->start(true);
+    if(NULL!=mRemoteIp)
+    {
+        mIpOnlineChecker->setIp(mRemoteIp);
+        mIpOnlineChecker->start();
+    }
     leave();
 }
 
@@ -155,6 +166,7 @@ void RemotePC::close()
 void RemotePC::setIp(char *ip)
 {
     enter();
+    mRemoteIp = ip;
     mClient->setIp(ip);
     leave();
 }
@@ -259,13 +271,38 @@ void RemotePC::tcpClientDisconnected(void *tcp)
     disableSync();
 //    leave();
 
+    mIpOnlineChecker->checkOnline();
+    bool online = (GATEWAY_ONLINE==mIpOnlineChecker->getState());
+    //对方机在线才可重连, 重连失败才可设置为主机
+    mClient->setEnableReconnect(online);
+    if(online)
+    {
+        return;
+    }
+
+    if(NULL!=mHandler)
+    {
+        userLock();
+        mHandler->canBeMaster();
+        DEBUG_OUTPUT("[RemotePC]disconnect\n");
+        userLeave();
+    }
 }
 
 void RemotePC::tcpClientError(void *tcp)
 {    
     UN_USE(tcp);
     DEBUG_OUTPUT("[RemotePC]tcp error\n");
-    TcpClient *client = (TcpClient *)tcp;
+
+    mIpOnlineChecker->checkOnline();
+    bool online = (GATEWAY_ONLINE==mIpOnlineChecker->getState());
+    //对方机在线才可重连, 重连失败才可设置为主机
+    mClient->setEnableReconnect(online);
+    if(!online)
+    {
+        return;
+    }
+//    TcpClient *client = (TcpClient *)tcp;
 
 //    enter();
 //    if(client==mClient)
@@ -276,7 +313,29 @@ void RemotePC::tcpClientError(void *tcp)
         handleConnectCount();
         DEBUG_OUTPUT("[RemotePC]after handle connect count\n");
 //    }
-//    leave();
+        //    leave();
+}
+
+void RemotePC::gatewayStateChanged()
+{
+    switch (mIpOnlineChecker->getState()) {
+    case GATEWAY_ONLINE:
+    {
+        if(!isConnected())
+        {
+            mClient->setEnableReconnect(false);
+            mClient->start(true);
+        }
+    }
+        break;
+    case GATEWAY_OFFLINE:
+    {
+        mClient->setEnableReconnect(false);
+        mClient->tryBreakConnection();
+    }
+    default:
+        break;
+    }
 }
 
 bool RemotePC::isConnected()
@@ -390,6 +449,7 @@ void RemotePC::enableHeartbeat()
     THREAD_CREATE(&mHeartbeatThread, remote_heartbeat_thread, this, ret);
     if(ret)
     {
+        mHeartbeatEnable = true;
         THREAD_RUN(mHeartbeatThread, false);
     }
 //    leave();
@@ -397,8 +457,12 @@ void RemotePC::enableHeartbeat()
 
 void RemotePC::disableHeartbeat()
 {
-//    enter();
-    THREAD_CLOSE(mHeartbeatThread);
+    //    enter();
+    if(mHeartbeatEnable)
+    {
+        THREAD_CLOSE(mHeartbeatThread);
+        mHeartbeatEnable = false;
+    }
 //    leave();
 }
 

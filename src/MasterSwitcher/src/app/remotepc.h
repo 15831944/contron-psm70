@@ -7,6 +7,8 @@
 #include "localpc.h"
 #include "iremotepc.h"
 #include "sync.h"
+#include "gateway.h"
+#include "igateway.h"
 
 /**
  * @brief The RemotePC class
@@ -17,7 +19,7 @@
  * 重连计数,重连错误则将本机设置为主机;
  */
 
-class RemotePC: public BaseObject, public ITcpClient
+class RemotePC: public BaseObject, public ITcpClient, public IGateway
 {
 public:
     RemotePC();
@@ -41,6 +43,10 @@ public:
     void tcpClientConnected(void *tcp);
     void tcpClientDisconnected(void *tcp);
     void tcpClientError(void *tcp);
+
+public:
+    //IGateway
+    void gatewayStateChanged();
 
 public:
     bool isConnected();
@@ -80,6 +86,7 @@ private:
     int mConnectCount;
     pthread_t mHeartbeatThread;
     int mMaxConnect;
+    bool mHeartbeatEnable;
 
     int mSyncInterval;
     bool mIsSlave;
@@ -89,6 +96,8 @@ private:
     IRemotePC *mHandler;
     Sync *mSync;
     bool mForceCheckMaster;
+    Gateway *mIpOnlineChecker;
+    char *mRemoteIp;
 };
 
 #endif // REMOTEPC_H

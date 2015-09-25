@@ -23,6 +23,8 @@ public:
     bool checkStarted();
     void waitForNewConnection();
 
+    void closeAllClient();
+
 public:
     bool isExiting();
     void deleteCloseClient();

@@ -71,6 +71,7 @@ void SwitchServer::canBeMaster()
 {
 //    enter();
     APP_LOG("[SwitchServer]can be Master \n");
+    mLocal->closeTcpClient();
     mGateway->checkOnline();
     if(GATEWAY_ONLINE==mGateway->getState())
     {

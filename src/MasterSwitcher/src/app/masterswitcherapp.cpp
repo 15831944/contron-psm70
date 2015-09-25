@@ -4,7 +4,6 @@
 #include "config.h"
 #include "tcp.h"
 
-
 MasterSwitcherApp::MasterSwitcherApp()
 {
     mLocal = new LocalPC();

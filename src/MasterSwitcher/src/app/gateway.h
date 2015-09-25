@@ -40,6 +40,8 @@ private:
 
     char *mGatewayIP;
     OnlineChecker *mOnlineChecker;
+    int mCheckInterval;
+    bool mInit;
 
 };
 

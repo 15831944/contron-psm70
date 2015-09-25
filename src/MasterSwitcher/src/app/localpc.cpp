@@ -221,6 +221,11 @@ void LocalPC::tcpServerReceiveData(void *tcp, char *buffer, int size)
     }
 }
 
+void LocalPC::closeTcpClient()
+{
+    mTcpServer->closeAllClient();
+}
+
 bool LocalPC::floatIPOnline()
 {
     Ping ping;

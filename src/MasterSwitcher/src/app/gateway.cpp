@@ -8,11 +8,13 @@ Gateway::Gateway()
     :BaseObject(), IOnlineChecker()
 {
     mState = GATEWAY_ONLINE;
-    mGatewayIP = "10.7.5.254";
+    mGatewayIP = NULL;
+    mCheckInterval = 5;
+    mInit = false;
+
 
     mOnlineChecker = new OnlineChecker();
     mOnlineChecker->setOnlineChecker(this);
-    mOnlineChecker->setCheckInterval(5);
 }
 
 Gateway::~Gateway()
@@ -22,13 +24,18 @@ Gateway::~Gateway()
 
 void Gateway::start()
 {
+    if(NULL==mGatewayIP)
+    {
+        return;
+    }
+    mOnlineChecker->setCheckInterval(mCheckInterval);
     mOnlineChecker->exec();
 }
 
 void Gateway::setStateChange(IGateway *stateChange)
 {
     mStateChange = stateChange;
-    stateChanged();
+//    stateChanged();
 }
 
 void Gateway::setIp(char *ip)
@@ -48,10 +55,14 @@ void Gateway::online()
 {
     bool changed = false;
     enter();
-    if(GATEWAY_ONLINE != mState)
+    if((!mInit) || (GATEWAY_ONLINE != mState))
     {
         mState = GATEWAY_ONLINE;
         changed = true;
+        if(!mInit)
+        {
+            mInit = true;
+        }
     }
     leave();
     if(changed)
@@ -64,10 +75,14 @@ void Gateway::offline()
 {
     bool changed = false;
     enter();
-    if(GATEWAY_OFFLINE != mState)
+    if((!mInit) || (GATEWAY_OFFLINE != mState))
     {
         mState = GATEWAY_OFFLINE;
         changed = true;
+        if(!mInit)
+        {
+            mInit = true;
+        }
     }
     leave();
     if(changed)

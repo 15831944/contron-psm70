@@ -45,6 +45,7 @@ public:
 
 public:
     void tcpServerReceiveData(void *tcp, char *buffer, int size);
+    void closeTcpClient();
 
 protected:
     bool floatIPOnline();
