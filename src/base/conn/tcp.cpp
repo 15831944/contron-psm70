@@ -80,28 +80,39 @@ int tcp_setoption_client(SOCKET_HANDLE socket_fd)
         return -5;
     }
 
-    struct timeval timeo = {3, 0};
+
+    //设置读(连接)/写超时
+#if WIN32
+    int timeo = 15000;
+#else
+    struct timeval timeo = {15, 0};
+#endif
+
     if(setsockopt(socket_fd, SOL_SOCKET, SO_SNDTIMEO, (const char *)&timeo, sizeof(struct timeval)) == -1)
     {
         return -6;
     }
+    if(setsockopt(socket_fd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeo, sizeof(struct timeval)) == -1)
+    {
+        return -7;
+    }
 
 #ifndef WIN32
 
-    int flag = 0;
+//    int flag = 0;
 
 
-    // set socket fd noblock
-    flag = fcntl(socket_fd, F_GETFL, 0);
-    if(flag < 0)
-    {
-        return -11;
-    }
+//    // set socket fd noblock
+//    flag = fcntl(socket_fd, F_GETFL, 0);
+//    if(flag < 0)
+//    {
+//        return -11;
+//    }
 
-    if(fcntl(socket_fd, F_SETFL, flag | O_NONBLOCK) < 0)
-    {
-        return -12;
-    }
+//    if(fcntl(socket_fd, F_SETFL, flag | O_NONBLOCK) < 0)
+//    {
+//        return -12;
+//    }
 #endif
 
     return 0;
@@ -159,6 +170,8 @@ void tcp_connect_client(SOCKET_HANDLE &fd, char *hostname, int port)
     }
 #endif
 
+    tcp_setoption_client(fd);
+
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr = *((struct in_addr *)host->h_addr);
@@ -179,8 +192,6 @@ void tcp_connect_client(SOCKET_HANDLE &fd, char *hostname, int port)
         return;
     }
 #endif
-
-    tcp_setoption_client(fd);
 }
 
 void tcp_connect_server(SOCKET_HANDLE &fd, char *hostname, int port)
@@ -232,6 +243,9 @@ void tcp_connect_server(SOCKET_HANDLE &fd, char *hostname, int port)
         return;
     }
 #endif
+
+    int opt = 1;
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));
 
     local.sin_family = AF_INET;
     local.sin_port = htons(port);
